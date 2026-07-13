@@ -513,7 +513,8 @@ const BEATS = {
     chart: '01:26',
     anno: g => {
       const c = columnGeom();
-      callout(g, c.x0 - 10, c.yFor(0.12) - 8, 'market 12¢ · model ≈10¢', { anchor: 'end', mono: true, size: 13.5, fill: '#e8e4d8' });
+      callout(g, c.x0 - 10, c.yFor(0.12) - 24, 'market 12¢', { anchor: 'end', mono: true, size: 13.5, fill: '#e8e4d8' });
+      callout(g, c.x0 - 10, c.yFor(0.12) - 8, 'model ≈10¢', { anchor: 'end', mono: true, size: 12, fill: '#7bc8e8' });
       callout(g, c.x0 - 10, c.yFor(0.12) + 10, 'the same 10,000 endings, re-counted', { anchor: 'end', size: 11.5 });
     },
   },
@@ -556,7 +557,8 @@ const BEATS = {
       callout(g, x, yScale(0.40), ['dashed: the clock reading, made precise.', 'Model fair value from score, cards, time only'],
         { anchor: 'middle', size: 11, fill: '#7bc8e8' });
       const c = columnGeom();
-      callout(g, c.x0 - 10, c.yFor(0.17) - 8, 'market 17¢ · model ≈12¢', { anchor: 'end', mono: true, size: 13, fill: '#e8e4d8' });
+      callout(g, c.x0 - 10, c.yFor(0.17) - 24, 'market 17¢', { anchor: 'end', mono: true, size: 13, fill: '#e8e4d8' });
+      callout(g, c.x0 - 10, c.yFor(0.17) - 8, 'model ≈12¢', { anchor: 'end', mono: true, size: 12, fill: '#7bc8e8' });
       callout(g, c.x0 - 10, c.yFor(0.17) + 10, 'an interpretation, not a census of traders', { anchor: 'end', size: 11 });
     },
   },
