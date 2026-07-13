@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>The Two Meanings of 26¢ — what a prediction-market price actually says</title>
+<title>The Two Meanings of 26¢: what a prediction-market price actually says</title>
 <meta name="description" content="One Kalshi contract, one World Cup quarterfinal, and a price that appeared twice meaning opposite things. A scrollytelling explanation of what a prediction-market price is made of.">
 <link rel="stylesheet" href="css/style.css">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>&#162;</text></svg>">
@@ -31,7 +31,7 @@
     <article class="card hero" data-beat="hero">
       <span class="kicker">KXWCADVANCE-26JUL11ARGSUI-SUI · Kalshi · Arrowhead Stadium, Kansas City · July 11, 2026</span>
       <h1>The Two Meanings<br>of 26<span class="cents">¢</span></h1>
-      <p class="dek">At 9:00&nbsp;PM, a contract paying $1 if Switzerland knocked Argentina out of the World Cup cost <span class="price">26¢</span>. Three hours later, after a goal, an equalizer, and a red card, it cost <span class="price">26¢</span> again.</p>
+      <p class="dek">At 9:00&nbsp;PM, a contract paying $1 if Switzerland knocked Argentina out of the World Cup cost <span class="price">26¢</span>. Two hours later, after a goal, an equalizer, and a red card, it cost <span class="price">26¢</span> again.</p>
       <p class="dek"><em>It was not the same price.</em></p>
       <p class="scroll-hint">scroll ↓</p>
     </article>
@@ -40,7 +40,7 @@
     <article class="card" data-beat="count">
       <span class="eyebrow">First: the naive reading</span>
       <h2>A price is a count</h2>
-      <p>A Kalshi contract settles at <span class="num">$1</span> if the event happens, <span class="num">$0</span> if it doesn’t. So a price of <span class="price">26¢</span> <span class="chip real">real</span> reads like a probability: the crowd trades as if about <span class="num">26 in 100</span> ways tonight could go end with Switzerland advancing.</p>
+      <p>A Kalshi contract settles at <span class="num">$1</span> if the event happens, <span class="num">$0</span> if it doesn’t. So a price of <span class="price">26¢</span> <span class="chip real">real</span> reads like a probability: of every <span class="num">100</span> ways tonight could go, the crowd trades as if about <span class="num">26</span> end with Switzerland advancing.</p>
       <p>Each dot here is one ten-thousandth of that belief: one possible ending of the match. <span class="num">2,600</span> are lit. This is the market’s claim, drawn as a census of futures.</p>
     </article>
 
@@ -59,7 +59,7 @@
       <h2>The tape answers the question</h2>
       <p>A resting order changes nothing. The price moves only when someone stops waiting: a buyer takes the sellers’ <span class="price">55¢</span>, or a seller hits the buyers’ <span class="price">54¢</span>. Each acceptance prints a trade. The last print is the price you read.</p>
       <p>The public tape shows which side blinked. The thirty most recent prints in this market are all buyers crossing at <span class="price">55¢</span> <span class="chip real">real</span>. That is why the price sits at 55: eager buyers keep accepting the most reluctant sellers’ terms.</p>
-      <p><span class="num">7.9&nbsp;million</span> contracts rest at 55¢. If buyers eat through them all, the next print reads <span class="price">56¢</span>. A price moves one consumed level at a time.</p>
+      <p><span class="num">7.9&nbsp;million</span> contracts rest at 55¢ <span class="chip real">real</span>. If buyers eat through them all, the next print reads <span class="price">56¢</span>. A price moves one consumed level at a time.</p>
     </article>
 
     <!-- BEAT 3a — the two dice -->
@@ -67,7 +67,7 @@
       <span class="eyebrow">The model’s two ingredients</span>
       <h2>Two dice, loaded differently</h2>
       <p>Before any grid, meet its ingredients. The model treats each team’s goals as a Poisson process: a counting recipe that turns one number, the expected-goal rate λ, into a full spread of outcomes.</p>
-      <p>Argentina at λ&nbsp;≈&nbsp;<span class="num">1.8</span> <span class="chip model">model</span>: 16% no goals, 29% one, 27% two, 16% three. Switzerland at λ&nbsp;≈&nbsp;<span class="num">0.9</span> <span class="chip model">model</span>: 42% blank, 36% one goal, 16% two.</p>
+      <p>Argentina at λ&nbsp;≈&nbsp;<span class="num">1.8</span> <span class="chip model">model</span>: 16% no goals, 29% one, 27% two, 16% three, 11% more. Switzerland at λ&nbsp;≈&nbsp;<span class="num">0.9</span> <span class="chip model">model</span>: 42% blank, 36% one goal, 16% two, 6% more.</p>
       <p>Those are the two bars beside this card, drawn in dots. Argentina’s mass sits on one and two goals; Switzerland’s crowds zero and one. Multiply the two dice and every final score follows.</p>
     </article>
 
@@ -75,8 +75,8 @@
     <article class="card" data-beat="kickoff">
       <span class="eyebrow">The first 26¢ · 9:00 pm</span>
       <h2>At kickoff, 26¢ means <em>capability</em></h2>
-      <p>Ninety-plus minutes ahead, eleven against eleven, score 0–0. The market had said <span class="price">25–26¢</span> <span class="chip real">real</span> for four straight days.</p>
-      <p>Multiply the dice and the grid appears: every final score, sized by its share of the 10,000 endings <span class="chip model">model</span>. Each cell’s dot count is Argentina’s row share times Switzerland’s column share. A 1–0 Argentina win is the single likeliest score, near <span class="num">12%</span>. Switzerland’s lit mass collects where its column beats Argentina’s row, plus a slice of every draw cell, because a level score at ninety sends a knockout tie to extra time.</p>
+      <p>Ninety-plus minutes ahead, eleven against eleven, score 0–0. The market had opened the week at <span class="price">27–28¢</span> and sat at <span class="price">25–26¢</span> all match day <span class="chip real">real</span>.</p>
+      <p>Multiply the dice and the grid appears: every final score, sized by its share of the 10,000 endings <span class="chip model">model</span>. Each cell’s dot count is Argentina’s row share times Switzerland’s column share, times the 10,000 dots. A 1–0 Argentina win is the single likeliest score, near <span class="num">12%</span>. Switzerland’s lit mass collects where its column beats Argentina’s row, plus a slice of every draw cell, because a level score at ninety sends a knockout tie to extra time.</p>
       <p>Count the lit dots and you get the price. This 26¢ is cold: capability over a long, high-variance horizon.</p>
     </article>
 
@@ -85,7 +85,7 @@
       <span class="eyebrow">The match begins to happen</span>
       <h2>Minute 10: the favorite scores</h2>
       <p>Alexis Mac Allister heads in a Messi corner. The contract collapses from <span class="price">25¢</span> to <span class="price">12¢</span> within minutes <span class="chip real">real</span>.</p>
-      <p>Switzerland’s ability did not change; the ledger did. Over the remaining eighty minutes the model expects roughly <span class="num">1.6</span> more Argentina goals and <span class="num">0.8</span> Swiss ones <span class="chip model">model</span>. An equalizer at some point is barely better than a coin flip (<span class="num">54%</span>), and scoring it only buys back the problem Switzerland started with. From a goal up, the model makes Argentina an <span class="num">83%</span> favorite to finish the job in regulation <span class="chip model">model</span>.</p>
+      <p>Switzerland’s ability did not change; the ledger did. Over the remaining eighty minutes the model expects roughly <span class="num">1.6</span> more Argentina goals and <span class="num">0.8</span> Swiss ones <span class="chip model">model</span>. An equalizer at some point is barely better than a coin flip (<span class="num">54%</span>), and scoring it only buys back the problem Switzerland started with. From a goal up, the model makes Argentina an <span class="num">83%</span> favorite to win in regulation <span class="chip model">model</span>.</p>
       <p>The cold read of this state: about <span class="price cold">10¢</span> <span class="chip model">model</span>. The market paid <span class="price">12¢</span> <span class="chip real">real</span>.</p>
     </article>
 
@@ -94,7 +94,7 @@
       <span class="eyebrow">The most crowded minute</span>
       <h2>Minute 67: 1–1, and the market floods</h2>
       <p>Dan Ndoye slips the equalizer under Martínez. Within one minute, this contract trades at <span class="price">10¢</span> and at <span class="price">35¢</span> <span class="chip real">real</span>. Not in sequence. In the same sixty seconds.</p>
-      <p>The next minute, <span class="num">1.28&nbsp;million</span> contracts change hands, roughly <span class="num">22×</span> the pre-kickoff rate <span class="chip real">real</span>. Heavy volume alone proves interest. Heavy volume across a 25-cent range proves disagreement: thousands of traders repricing the same goal faster than they can agree on what it is worth.</p>
+      <p>The next minute, <span class="num">1.28&nbsp;million</span> contracts change hands, roughly <span class="num">22×</span> the pre-kickoff rate <span class="chip real">real</span>. Heavy volume alone proves interest. Heavy volume across a 25-cent range proves disagreement: a flood of orders repricing the same goal faster than the crowd can agree on what it is worth (the public tape shows over a thousand prints in three minutes <span class="chip real">real</span>).</p>
       <p>The pale band around the price line is each minute’s full traded range. Watch it blow open here, and stay open.</p>
     </article>
 
@@ -103,7 +103,7 @@
       <span class="eyebrow">The alarm</span>
       <h2>Minute 72: red card</h2>
       <p>Breel Embolo, already booked, goes down too easily. VAR review. Second yellow. Switzerland will finish the night with ten men.</p>
-      <p>The equalizer’s hope is repriced in seconds: <span class="price alarm">32¢ → 16¢</span> <span class="chip real">real</span>. A team that needed goals now cannot spare the bodies to chase one.</p>
+      <p>The equalizer’s hope is repriced within two minutes: <span class="price alarm">32¢ → 16¢</span> <span class="chip real">real</span>. A team that needed goals now cannot spare the bodies to chase one.</p>
       <p>But watch what the price does next. The same crippled state has a second, colder reading.</p>
     </article>
 
@@ -113,7 +113,7 @@
       <h2>The story and the clock</h2>
       <p>The story reading: Switzerland is down a man for fifty-plus minutes, hope just cancelled, sell.</p>
       <p>The clock reading: Argentina now has <em>fewer minutes</em> in which to convert its advantage, and every scoreless minute makes the draw, and the penalty shootout behind it, more likely.</p>
-      <p>The dashed line is the clock reading made precise: this page’s model, fed only score, cards, and time remaining, values survival at <span class="price cold">12¢</span> right after the red card and drifts toward <span class="price cold">17¢</span> at the whistle <span class="chip model">model</span>.</p>
+      <p>The dashed line is the clock reading made precise: this page’s model, fed only score, cards, and time remaining, values survival at <span class="price cold">≈12¢</span> right after the red card and drifts toward <span class="price cold">17¢</span> at the whistle <span class="chip model">model</span>.</p>
       <p class="aside">Who holds each reading? Kalshi does not disclose who trades. Treat the two readings as an interpretation of the price’s behavior, and never as a census of traders.</p>
     </article>
 
@@ -122,7 +122,7 @@
       <span class="eyebrow">Time decay, live</span>
       <h2>Minutes 73–90: the survival climb</h2>
       <p>Switzerland stops trying to win. Ten men, one objective: hold 1–1 to the whistle. The price climbs a cent at a time, <span class="num">16 → 19 → 22 → 25</span> <span class="chip real">real</span>.</p>
-      <p>Now read the two lines together. The clock alone lifts the model from <span class="price cold">12¢</span> to <span class="price cold">17¢</span> <span class="chip model">model</span>. The market climbed from <span class="price">16¢</span> to <span class="price">26¢</span> <span class="chip real">real</span>. The amber wedge between the lines is the part the clock cannot explain. It gets a name two beats from now.</p>
+      <p>Now read the two lines together. The clock alone lifts the model from <span class="price cold">≈12¢</span> to <span class="price cold">17¢</span> <span class="chip model">model</span>. The market climbed from <span class="price">16¢</span> to <span class="price">26¢</span> <span class="chip real">real</span>. The amber wedge between the lines is the part the clock cannot explain. It gets a name at the final whistle.</p>
       <p class="aside">Same digits, third meaning, one screen over: at minute ~85 Argentina’s <em>regulation-time win</em> contract also read <span class="price">26¢</span> <span class="chip real">real</span>. A favorite racing the same clock from the other side.</p>
     </article>
 
@@ -131,7 +131,7 @@
       <span class="eyebrow">The second 26¢ · ~11:05 pm</span>
       <h2>At the whistle, 26¢ means <em>survival</em></h2>
       <p>Regulation ends 1–1. The contract costs <span class="price">26¢</span> again <span class="chip real">real</span>, and every world inside it has been replaced.</p>
-      <p>The capability worlds are gone. What remains: score through a four-to-one headwind with ten men (<span class="num">rare</span>), or hold 0–0 for thirty more minutes and take Argentina to penalties, roughly a coin flip <span class="chip model">model</span>.</p>
+      <p>The capability worlds are gone. What remains: score against a scoring-rate tilt the model puts near nine to one (<span class="num">rare</span>), or hold 0–0 for thirty more minutes and take Argentina to penalties, roughly a coin flip <span class="chip model">model</span>.</p>
       <p>Kickoff’s 26¢ was a bet on ability across time. This 26¢ is a bet <em>against</em> time itself. Same number, rebuilt from different stuff.</p>
     </article>
 
@@ -140,15 +140,15 @@
       <span class="eyebrow">Reading the gap</span>
       <h2>The nine cents of feeling</h2>
       <p>A cold model prices this endgame near <span class="price cold">17¢</span> <span class="chip model">model</span>: about <span class="num">4¢</span> of “ten men win extra time” plus <span class="num">13¢</span> of “reach penalties, flip the coin.” The crowd paid <span class="price">26¢</span> <span class="chip real">real</span>.</p>
-      <p>The <span class="price hot">9¢</span> band on top is the wedge you watched grow, and the model cannot see inside it. Some of it is feeling: the narrative premium of heroic defiance on TV; holders who bought at 28¢ refusing to sell at a loss. Some of it may be knowledge: legs, bodies, a low block that looked unbreakable. <em>A price never tells you which.</em></p>
-      <p class="aside">Honesty notes: the gap runs both ways (at the equalizer the market lagged <em>below</em> this model, <span class="num">32¢</span> vs <span class="num">35%</span>); fees explain at most <span class="num">1.75¢</span>; and the model itself is an assumption, calibrated to the kickoff price with red-card effects from published World Cup research.</p>
+      <p>The <span class="price hot">9¢</span> band on top is the wedge you watched grow, and the model cannot see inside it. Some of it may be feeling: the narrative premium of heroic defiance on TV; holders who bought at 28¢ refusing to sell at a loss. Some of it may be knowledge: legs, bodies, a low block that looked unbreakable. <em>A price never tells you which.</em></p>
+      <p class="aside">Honesty notes: the gap runs both ways (at the equalizer the market lagged <em>below</em> this model, <span class="num">32¢</span> <span class="chip real">real</span> vs <span class="num">35%</span> <span class="chip model">model</span>); fees explain at most <span class="num">1.75¢</span> <span class="chip real">real</span>; and the model itself is an assumption, calibrated to the kickoff price with red-card effects from published World Cup research.</p>
     </article>
 
     <!-- BEAT 7 — resolution -->
     <article class="card" data-beat="resolution">
       <span class="eyebrow">Extra time</span>
       <h2>The ending that arrived</h2>
-      <p>The ten men hold, and hold; the price touches <span class="price">35¢</span> as penalties near <span class="chip real">real</span>. Then, minute 112: Julián Álvarez curls one into the top corner. <span class="price">33¢ → 2¢</span> in one minute. Lautaro adds a third. The contract settles at <span class="num">$0</span>.</p>
+      <p>The ten men hold, and hold; the price touches <span class="price">35¢</span> as penalties near <span class="chip real">real</span>. Then, minute 112: Julián Álvarez curls one into the top corner. <span class="price">35¢ → 2¢</span> in one minute. Lautaro adds a third. The contract settles at <span class="num">$0</span>.</p>
       <p>Was the 26¢ <em>wrong</em>? No. A 26% event fails to arrive 74% of the time; judging a price by one outcome is the oldest mistake in probability. What the market actually sold, all night, was <em>meaning</em>: a live translation of the game state into one number.</p>
     </article>
 
@@ -190,7 +190,7 @@
   <ul>
     <li>Market: <span class="src">KXWCADVANCE-26JUL11ARGSUI-SUI</span>, “Will Switzerland advance past Argentina?” · 1-minute close prices and volumes from Kalshi’s public API (<span class="src">api.elections.kalshi.com/trade-api/v2</span>, candlesticks endpoint, pulled July 12–13, 2026 UTC); intraminute high/low from the same endpoint (OHLC re-pull, July 13, 2026 16:23 UTC). Kickoff-hour closes 25–26¢; 03:05–03:06 UTC closes 26¢; equalizer minute (02:29 UTC) traded a 10–35¢ range; equalizer-minute volume 1,282,455 contracts vs pre-kickoff mean ≈ 58,800/min.</li>
     <li>Match facts: NBC Sports live blog · FOX Sports boxscore · Yahoo Sports match report (Argentina 3–1 Switzerland a.e.t., July 11, 2026; goals 10′, 67′, 112′, 120′+; Embolo second yellow 72′–73′; sources differ by one minute and we say so).</li>
-    <li>Order book snapshot: England v Argentina semifinal market (<span class="src">KXWCADVANCE-26JUL15ENGARG-ENG</span>), public API, July 13, 2026 ~06:05 UTC.</li>
+    <li>Order book snapshot: England v Argentina semifinal market (<span class="src">KXWCADVANCE-26JUL15ENGARG-ENG</span>), public API, July 13, 2026 06:26 UTC.</li>
     <li>Trade tape: 30 most recent public prints on the same semifinal market (<span class="src">/markets/trades</span>, pulled July 13, 2026 16:23 UTC); all 30 were taker-side YES at $0.55. Equalizer-window tape on the quarterfinal market: the API returned its 1,000-trade page cap for 02:29–02:32 UTC alone.</li>
   </ul>
 
@@ -208,7 +208,7 @@
   <ul>
     <li>Binary $1/$0 contracts, 1–99¢ pricing, YES/NO complementarity, central limit order book: Kalshi’s own explainer and Help Center; confirmed live via the public API (<span class="src">market_type: binary</span>, <span class="src">notional_value: $1</span>).</li>
     <li>Fees ≈ 0.07 × P × (1−P) per contract, at most 1.75¢ at 50¢ (Kalshi Help Center; pm.wiki; API <span class="src">fee_type: quadratic</span>).</li>
-    <li>Participants include institutional market makers (Susquehanna, announced by Kalshi April 2024) and Kalshi’s own trading affiliate (Sportico, 2025). CFTC-designated contract market since Nov 2020; sports contracts since Jan 2025; Third Circuit ruling April 2026; litigation ongoing in several states.</li>
+    <li>Participants include institutional market makers, firms that keep standing buy and sell quotes resting in the book (Susquehanna, announced by Kalshi April 2024), and Kalshi’s own trading affiliate (Sportico, 2025). CFTC-designated contract market since Nov 2020; sports contracts since Jan 2025; Third Circuit ruling April 2026; litigation ongoing in several states.</li>
   </ul>
 
   <h3>Generalization markets (all prices real, dated)</h3>

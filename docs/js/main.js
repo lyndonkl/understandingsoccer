@@ -3,7 +3,7 @@
  * Split of responsibilities (design/architecture.md):
  *   WebGL (engine.js)  — the 10,000-unit layer, GPU tweens
  *   D3 + SVG (here)    — scales, axes, price chart, order book, annotations
- *   HTML cards         — the prose; IntersectionObserver drives beats
+ *   HTML cards         — the prose; a passive scroll listener drives beats
  * One shared coordinate system: D3 scales in CSS pixels feed both layers.
  */
 
@@ -278,10 +278,11 @@ function ensureChart() {
       .attr('stroke', ev.kind === 'alarm' ? '#e4572e' : 'rgba(232,228,216,0.25)')
       .attr('stroke-width', ev.kind === 'alarm' ? 1.4 : 1);
     // alternate label rows so neighbors at 02:29/02:33/03:05 don't collide;
-    // the regulation-end label additionally hangs right of its line
+    // the regulation-end label gets its own third row, hung right of its line
     const rightHang = ev.utc === '03:05';
+    const row = rightHang ? 2 : idx % 2;
     g.append('text').attr('class', 'callout')
-      .attr('x', x + (rightHang ? 5 : 0)).attr('y', chartRect.y - 10 - (idx % 2) * 15)
+      .attr('x', x + (rightHang ? 5 : 0)).attr('y', chartRect.y - 10 - row * 15)
       .attr('text-anchor', rightHang ? 'start' : 'middle').attr('font-size', 10.5)
       .attr('fill', ev.kind === 'alarm' ? '#e4572e' : '#98a092')
       .text(ev.label.split('(')[0].trim());
@@ -390,7 +391,7 @@ const BEATS = {
       g.append('line').attr('x1', bx).attr('x2', bx)
         .attr('y1', r.y - 6).attr('y2', r.y + r.h + 6)
         .attr('stroke', '#e8e4d8').attr('stroke-width', 1).attr('stroke-dasharray', '4 3');
-      callout(g, bx, r.y - 26, '2,600 of 10,000 endings — the market’s count', { anchor: 'middle' });
+      callout(g, bx, r.y - 26, '2,600 of 10,000 endings · the market’s count', { anchor: 'middle' });
       callout(g, r.x + r.w * 0.13, r.y + r.h + 24, 'SWITZERLAND ADVANCES', { anchor: 'middle', size: 11, fill: '#7bc8e8' });
       callout(g, r.x + r.w * 0.63, r.y + r.h + 24, 'IT DOESN’T', { anchor: 'middle', size: 11 });
       stamp(g, r.x, r.y + r.h + 40, 'real', 'REAL · KICKOFF PRICE 26¢ · KALSHI');
@@ -530,7 +531,7 @@ const BEATS = {
       g.append('line').attr('x1', x).attr('x2', x)
         .attr('y1', chartRect.y + chartRect.h * 0.22).attr('y2', chartRect.y + chartRect.h * 0.7)
         .attr('stroke', 'rgba(232,228,216,0.5)').attr('stroke-width', 1);
-      callout(g, chartRect.x + 8, chartRect.y - 26, 'pale band = each minute’s full traded range (REAL)', { size: 10.5 });
+      callout(g, chartRect.x + chartRect.w, chartRect.y + chartRect.h + 52, 'pale band = each minute’s full traded range (REAL)', { anchor: 'end', size: 10.5 });
     },
   },
 
@@ -546,7 +547,7 @@ const BEATS = {
   },
 
   twoclocks: {
-    hud: { clock: "75' · 1–1 · 10 MEN", beat: 'Two readings', price: `market <b>17¢</b> · model 12¢` },
+    hud: { clock: "75' · 1–1 · 10 MEN", beat: 'Two readings', price: `market <b>17¢</b> · model ≈12¢` },
     state: () => priceColumn(N, region, { price: 0.17 }),
     chart: '02:47', model: true,
     anno: g => {
@@ -580,7 +581,7 @@ const BEATS = {
   },
 
   survival: {
-    hud: { clock: "FT · 1–1", beat: '26¢ = survival', price: `<b>26¢</b> — again` },
+    hud: { clock: "FT · 1–1", beat: '26¢ = survival', price: `<b>26¢</b> · again` },
     state: () => glyph(N, glyphRect(), { text: '26¢', yesCount: 2600, hotCount: 0 }),
     chart: false,
     anno: g => {
