@@ -668,29 +668,30 @@ const BEATS = {
     },
   },
 
-  shutdown: {
-    hud: { clock: 'FALL 2025', beat: 'Same lens: Washington', price: `17¢ = <b>17¢</b>?` },
-    state: () => smallMultiples(N, gridRectSquare(), [{ price: 0.17, fair: null }, { price: 0.17, fair: null }]),
+  outright: {
+    hud: { clock: 'JUL 2 → JUL 10', beat: 'Same lens: the trophy board', price: `18.4¢ = <b>18.4¢</b>` },
+    state: () => smallMultiples(N, gridRectSquare(), [{ price: 0.184, fair: null }, { price: 0.184, fair: null }]),
     chart: false,
     anno: g => {
       const r = gridRectSquare();
       const colW = (r.w - r.w * 0.08) / 2;
       const x1 = r.x + colW / 2, x2 = r.x + colW * 1.5 + r.w * 0.08;
-      const yTop = r.y + r.h * (1 - 0.17);
-      callout(g, x1, yTop - 58, 'SEP 23 · “> 35 days”', { anchor: 'middle', size: 12, fill: '#e8e4d8' });
-      callout(g, x1, yTop - 40, 'a lottery ticket on the unthinkable', { anchor: 'middle', size: 11 });
-      callout(g, x1, yTop - 18, 'settled YES · paid $1', { anchor: 'middle', mono: true, size: 11.5, fill: '#7bc8e8' });
-      callout(g, x2, yTop - 58, 'NOV 5 · “> 60 days”', { anchor: 'middle', size: 12, fill: '#e8e4d8' });
-      callout(g, x2, yTop - 40, 'an exhaustion tail, day 36', { anchor: 'middle', size: 11 });
-      callout(g, x2, yTop - 18, 'settled NO · paid $0', { anchor: 'middle', mono: true, size: 11.5, fill: '#f2a03d' });
-      stamp(g, r.x, r.y + r.h + 18, 'real', 'REAL · KALSHI NEWSROOM, DATED POSTS · 2025');
+      const yTop = r.y + r.h * (1 - 0.184);
+      callout(g, x1, yTop - 58, 'JUL 2 · four wins from the trophy', { anchor: 'middle', size: 12, fill: '#e8e4d8' });
+      callout(g, x1, yTop - 40, 'R16 still ahead · France at 33¢', { anchor: 'middle', size: 11 });
+      callout(g, x1, yTop - 18, 'close 18.4¢', { anchor: 'middle', mono: true, size: 11.5, fill: '#7bc8e8' });
+      callout(g, x2, yTop - 58, 'JUL 10 · three wins from the trophy', { anchor: 'middle', size: 12, fill: '#e8e4d8' });
+      callout(g, x2, yTop - 40, 'a round survived · France at 40¢', { anchor: 'middle', size: 11 });
+      callout(g, x2, yTop - 18, 'close 18.4¢', { anchor: 'middle', mono: true, size: 11.5, fill: '#7bc8e8' });
+      callout(g, r.x + r.w / 2, r.y + r.h + 24, '“Will Argentina win the 2026 World Cup?” · shorter road, stronger road, same price', { anchor: 'middle', size: 11 });
+      stamp(g, r.x, r.y + r.h + 38, 'real', 'REAL · KALSHI DAILY CANDLES · KXMENWORLDCUP-26-AR');
     },
   },
 
-  nyc: {
-    hud: { clock: 'OCT 2025', beat: 'Same lens: New York', price: `83¢ → <b>94¢</b>` },
+  knicks: {
+    hud: { clock: 'JUN 2026', beat: 'Same lens: the NBA Finals', price: `37¢ = <b>37¢</b>?` },
     state: () => smallMultiples(N, gridRectSquare(), [
-      { price: 0.80, fair: null }, { price: 0.84, fair: null }, { price: 0.94, fair: null },
+      { price: 0.37, fair: null }, { price: 0.30, fair: null }, { price: 0.37, fair: null },
     ]),
     chart: false,
     anno: g => {
@@ -698,13 +699,14 @@ const BEATS = {
       const gap = r.w * 0.08, colW = (r.w - gap * 2) / 3;
       const cx = k => r.x + k * (colW + gap) + colW / 2;
       const yFor = p => r.y + r.h * (1 - p);
-      [['SEP 11', 0.80, '80¢'], ['SEP 29', 0.84, '84¢'], ['OCT 31', 0.94, '94¢']].forEach(([d, p, l], k) => {
-        callout(g, cx(k), yFor(p) - 26, d, { anchor: 'middle', size: 11.5 });
-        callout(g, cx(k), yFor(p) - 10, l, { anchor: 'middle', mono: true, size: 13, fill: '#e8e4d8' });
+      [['JUN 3 · Finals eve', 0.37, '37¢ all day'], ['JUN 11 · down 29 in Game 4', 0.30, 'low 30¢'], ['JUN 11 · the comeback shelf', 0.37, '37¢ again']].forEach(([d, p, l], k) => {
+        callout(g, cx(k), yFor(p) - 42, d, { anchor: 'middle', size: 11.5 });
+        callout(g, cx(k), yFor(p) - 24, l, { anchor: 'middle', mono: true, size: 13, fill: '#e8e4d8' });
       });
-      callout(g, cx(1), yFor(0.84) - 58, ['Adams withdraws; the “threat”', 'lands, and the price goes UP'], { anchor: 'middle', size: 11 });
-      callout(g, cx(2), yFor(0.94) - 44, 'no news; just clock', { anchor: 'middle', size: 11 });
-      stamp(g, r.x, r.y + r.h + 18, 'real', 'REAL · ARCHIVED KALSHI PAGES + DATED PRESS · 2025');
+      callout(g, cx(0), yFor(0.37) - 60, 'capability: a 3-seed vs a 7-game series', { anchor: 'middle', size: 11 });
+      callout(g, cx(2), yFor(0.37) - 60, 'survival: reached from above, mid-game', { anchor: 'middle', size: 11 });
+      callout(g, r.x + r.w / 2, r.y + r.h + 24, 'night close 81¢ · title in five · a 4¢ team in April', { anchor: 'middle', mono: true, size: 11.5 });
+      stamp(g, r.x, r.y + r.h + 38, 'real', 'REAL · KALSHI 1-MIN + DAILY CANDLES · KXNBA-26-NYK');
     },
   },
 

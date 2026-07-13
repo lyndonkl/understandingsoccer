@@ -152,22 +152,22 @@
       <p>Was the 26¢ <em>wrong</em>? No. A 26% event fails to arrive 74% of the time; judging a price by one outcome is the oldest mistake in probability. What the market actually sold, all night, was <em>meaning</em>: a live translation of the game state into one number.</p>
     </article>
 
-    <!-- BEAT 8 — shutdown -->
-    <article class="card" data-beat="shutdown">
-      <span class="eyebrow">The lens, elsewhere · Washington, fall 2025</span>
-      <h2>Two 17¢, forty-three days apart</h2>
-      <p>The 2025 government shutdown became the longest in history: 43 days. Kalshi ran markets on its length.</p>
-      <p><strong>Sept 23</strong>, eight days before it began: “lasts <span class="num">&gt;35 days</span>” traded at <span class="price">17¢</span> <span class="chip real">real</span>. A lottery ticket on the unthinkable, when the median forecast was 4½ days. It settled <span class="num">YES</span>.</p>
-      <p><strong>Nov 5</strong>, day 36, record just broken, fourteen failed votes deep: “lasts <span class="num">&gt;60 days</span>” traded at <span class="price">17¢</span> <span class="chip real">real</span>. An exhaustion tail on a crisis with no visible exit. It settled <span class="num">NO</span>.</p>
-      <p>Same number. One priced “surely not,” the other “why would it ever end.” You cannot read either without the date attached.</p>
+    <!-- BEAT 8 — the trophy board -->
+    <article class="card" data-beat="outright">
+      <span class="eyebrow">The lens, elsewhere · the trophy board, same tournament</span>
+      <h2>Eight days, one round, zero cents</h2>
+      <p>One market over sits the whole-tournament question: will Argentina win the World Cup itself? On <strong>July 2</strong>, four wins from the trophy, it closed at <span class="price">18.4¢</span> <span class="chip real">real</span>. On <strong>July 10</strong>, the eve of the Switzerland match, a full round survived and three wins needed: <span class="price">18.4¢</span> again <span class="chip real">real</span>.</p>
+      <p>Progress bought nothing, because the state is more than distance. In the same week France beat Morocco and surged <span class="price">33¢ → 40¢</span> <span class="chip real">real</span>: Argentina’s road home got shorter and stronger at once, and the two changes cancelled to the decimal.</p>
+      <p>During the quarterfinal you just watched, this market lived the same night: down to <span class="price">12¢</span> while ten men held, closing at <span class="price">20.9¢</span> on its busiest day of trading <span class="chip real">real</span>.</p>
     </article>
 
-    <!-- BEAT 9 — NYC -->
-    <article class="card" data-beat="nyc">
-      <span class="eyebrow">The lens, elsewhere · New York, fall 2025</span>
-      <h2>A survival price in slow motion</h2>
-      <p>Kalshi’s market on the NYC mayoral race spent October drifting <span class="price">85¢ → 91¢ → 92¢ → 94¢</span> <span class="chip real">real</span> for Mamdani, with no comparable news. The climb <em>was</em> the clock: calendar days draining from any comeback, the same time decay that lifted ten-man Switzerland, stretched over weeks.</p>
-      <p>And when Eric Adams, the event that was supposed to threaten Mamdani, actually withdrew on Sept&nbsp;28, the price went <em>up</em>: <span class="price">80¢ → 84¢</span> <span class="chip real">real</span>. The missing 20¢ had been structural uncertainty about the field, and the event revealed what the number had been made of.</p>
+    <!-- BEAT 9 — the Knicks -->
+    <article class="card" data-beat="knicks">
+      <span class="eyebrow">The lens, elsewhere · a different sport entirely</span>
+      <h2>37¢, twice, in June</h2>
+      <p>Kalshi’s market on the Knicks winning the 2026 NBA title spent Finals eve, <strong>June 3</strong>, pinned at <span class="price">37¢</span> <span class="chip real">real</span>: a third seed without home court, priced coldly against a full seven-game series. Capability.</p>
+      <p>Eight nights later, in Game 4, San Antonio led by 29. The price fell from <span class="price">62¢</span> to <span class="price">30¢</span>, then climbed back through a long shelf of prints at exactly <span class="price">37¢</span> <span class="chip real">real</span>. Same number, reached from above, minutes from either a tied series or the largest Finals comeback ever played. Survival.</p>
+      <p>New York won it on a tip-in with 1.2 seconds left; the market closed the night at <span class="price">81¢</span> <span class="chip real">real</span>. In April this had been a 4¢ team. The lens is not a soccer lens.</p>
     </article>
 
     <!-- BEAT 10 — coda -->
@@ -175,7 +175,7 @@
       <span class="eyebrow">Julian Jaynes, and the point</span>
       <h2>Understanding is metaphor</h2>
       <p>Jaynes argued that we understand anything by mapping it onto something familiar enough to feel. A market price is the unfamiliar thing: one number compressing capability, survival, structure, panic, conviction, and time.</p>
-      <p>The familiar thing is the event itself: the pitch, the clock, the man down, the calendar. Translate the number back into its state of the world and it opens; read it bare and it lies to you politely.</p>
+      <p>The familiar thing is the event itself: the pitch, the clock, the man down, the bracket. Translate the number back into its state of the world and it opens; read it bare and it lies to you politely.</p>
       <p><em>26¢ never meant “26%.” It meant</em> these worlds, counted, right now. <em>One price is never one thing.</em></p>
     </article>
 
@@ -208,13 +208,13 @@
   <ul>
     <li>Binary $1/$0 contracts, 1–99¢ pricing, YES/NO complementarity, central limit order book: Kalshi’s own explainer and Help Center; confirmed live via the public API (<span class="src">market_type: binary</span>, <span class="src">notional_value: $1</span>).</li>
     <li>Fees ≈ 0.07 × P × (1−P) per contract, at most 1.75¢ at 50¢ (Kalshi Help Center; pm.wiki; API <span class="src">fee_type: quadratic</span>).</li>
-    <li>Participants include institutional market makers, firms that keep standing buy and sell quotes resting in the book (Susquehanna, announced by Kalshi April 2024), and Kalshi’s own trading affiliate (Sportico, 2025). CFTC-designated contract market since Nov 2020; sports contracts since Jan 2025; Third Circuit ruling April 2026; litigation ongoing in several states.</li>
+    <li>Participants include institutional market makers, firms that keep standing buy and sell quotes resting in the book (Susquehanna, announced by Kalshi April 2024), and Kalshi’s own trading affiliate (Sportico, 2025). CFTC-designated contract market since Nov 2020; sports contracts since Jan 2025.</li>
   </ul>
 
-  <h3>Generalization markets (all prices real, dated)</h3>
+  <h3>Generalization markets (all prices real, from the public API)</h3>
   <ul>
-    <li>Shutdown 2025 (<span class="src">KXGOVSHUTLENGTH</span>): Sept 23 “&gt;35 days” 17% and median 4.5 days · Kalshi newsroom, Sept 23, 2025. Nov 5 “&gt;60 days” 17% · Kalshi newsroom, Nov 5, 2025. Settlement facts (43 days, Oct 1–Nov 12) · Wikipedia/NADO/CBS/NBC. Intraday curves for these settled markets are no longer publicly retrievable, so this page shows only the dated, sourced points.</li>
-    <li>NYC mayor 2025 (<span class="src">KXMAYORNYCPARTY-25-D</span>): 83¢ (Aug 24) · 80¢ (Sept 11) · 84¢ (Sept 29, after Adams withdrew) · 85¢ (Oct 6) · 91¢ (Oct 19) · 92¢ (Oct 23) · 94¢ (Oct 31) · Internet Archive snapshots of Kalshi’s own pages and dated Fox Business / Gothamist reports.</li>
+    <li>World Cup outright winner (<span class="src">KXMENWORLDCUP-26-AR</span>): Argentina’s daily closes of 18.4¢ on the candles ending July 3 and July 11 04:00Z (July 2 / July 10 ET; hourly candles pin July 10–11 at 18.3–18.8¢ for 17 straight hours); France (<span class="src">-FR</span>) 33.2¢ → 40.1¢ across its July 9 quarterfinal win over Morocco; Argentina’s July 11 intraday low 12.0¢ and close 20.9¢ on 3.96M contracts, its tournament maximum. Raw candle pulls in <span class="src">research/data/</span>; match results verified via ESPN, NPR, and FIFA match pages.</li>
+    <li>Knicks NBA title (<span class="src">KXNBA-26-NYK</span>, settled YES June 14, 2026): 36–37¢ across Finals eve June 3 (hourly candles); Game 4 night (June 11 UTC) low 30¢, then 20+ one-minute candles closing at exactly 37¢ between 01:54–02:24 UTC, night close 81¢; April 1 baseline 4–5¢. Series facts (4–1 over San Antonio; 29-point Game 4 comeback, the largest in Finals history; Anunoby tip-in with 1.2s left; Brunson Finals MVP) verified via Wikipedia’s 2026 NBA Finals page, ESPN, and CNN. The alignment of specific candle minutes to game moments is <span class="chip infer">inferred</span> from candle shape; tip-off-to-timestamp mapping was not separately verified.</li>
   </ul>
 
   <h3>Primary sources</h3>
@@ -231,10 +231,9 @@
     <li class="src">Červený, van Ours &amp; van Tuijl 2017, Empirical Economics (repub.eur.nl/pub/109448)</li>
     <li class="src">Titman et al. 2015, JRSS-A 178(3) · Maia et al., arXiv:2312.04338 · Chowdhury 2015, Marquette WP 2015-01</li>
     <li class="src">Degrenne &amp; Carling 2024, Frontiers in Sports and Active Living 6:1394621</li>
-    <li class="src">news.kalshi.com/p/shutdown-odds-hit-new-high-trump-walks-from-talks · /kalshi-government-shutdown-market-forecast(-record-high) · /government-shutdown-record-market-forecast</li>
-    <li class="src">en.wikipedia.org/wiki/2025_United_States_federal_government_shutdown · /2025_New_York_City_mayoral_election</li>
-    <li class="src">web.archive.org snapshots of kalshi.com/markets/kxmayornycparty (Aug 24–Nov 15, 2025)</li>
-    <li class="src">foxbusiness.com &amp; gothamist.com dated reports of Kalshi NYC prices (June 24 / Sept 29 / Nov 3, 2025)</li>
+    <li class="src">espn.com match pages: Cape Verde–Spain · Brazil–Norway · England–Norway · Germany–Paraguay (2026 World Cup results)</li>
+    <li class="src">npr.org (France–Morocco &amp; England–Norway quarterfinal reports) · fifa.com match centre · sports.yahoo.com semifinal bracket</li>
+    <li class="src">en.wikipedia.org/wiki/2026_NBA_Finals · espn.com/nba 2026 playoffs pages · cnn.com (May 25, 2026 ECF sweep)</li>
   </ul>
 
   <p class="aside" style="margin-top:1.4rem">Built as a fully static page: vanilla WebGL for the 10,000-unit layer, D3 for scales and annotation, no build step. The unit population is fixed for the whole page; every transition re-sorts the same 10,000 objects. Full research notes and raw API pulls live in the repository’s <span class="src">research/</span> directory.</p>
