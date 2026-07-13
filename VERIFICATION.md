@@ -1,5 +1,37 @@
 # Verification record
 
+## Round 3 — comprehension + de-politicization (2026-07-13)
+
+Eight-condition goal from user comprehension feedback; how each was met:
+
+1. **Grid self-legible.** Per-cell % labels on six cells ("12% · likeliest"
+   at 1–0), NO-dots brightened (alpha 0.32→0.5) so likelihood reads as dot
+   count, one-line reading key, and a "2,600 of 10,000 dots lit = the 26¢
+   price" readout. Verified by screenshot.
+2. **Rate → spread.** Dice card states λ's units (goals per 90 minutes) and
+   gives the random-arrivals intuition (shop averaging 1.8 customers/hour)
+   before the percentages.
+3. **Minute-10 traces.** Card shows 1.8×80⁄90 ≈ 1.6 and 0.9×80⁄90 ≈ 0.8,
+   defines 54% as P(≥1 Swiss goal in the remaining 80'), replaces the
+   abstract sentence, and ties 83% to re-running the grid from 1–0.
+4. **Two prices, one minute.** Equalizer card names the contract
+   (Switzerland-to-advance YES) and links prints-within-a-minute to the
+   tape beat.
+5. **Band visible and pointed at.** Envelope fill strengthened + stroked;
+   leader line + dot touch the band where it blows open at 02:29.
+6. **Model line traced.** Twoclocks card: "the same two dice from kickoff,
+   re-rolled every minute"; both chart lines directly labeled ("market ·
+   traded Kalshi price" / "model fair value · the dice, re-rolled").
+7. **No politics.** Shutdown and NYC beats replaced with two API-verified
+   sports markets: WC outright winner (Argentina 18.4¢ on Jul 2 and Jul 10,
+   KXMENWORLDCUP-26-AR) and Knicks NBA title (37¢ Finals eve vs 37¢
+   mid-Game-4, KXNBA-26-NYK). Method notes, sources, HUD, and the coda's
+   "calendar" reference updated; page-wide grep finds no political content.
+8. **Proof.** Incremental commits pushed; screenshots of every changed
+   beat; fresh-eyes reviewer answered the four comprehension questions from
+   the page files alone; live URL 200 with sports beats present and zero
+   political references.
+
 ## Round 2 — the six deepenings (2026-07-13, later the same day)
 
 User feedback converted to a six-point goal; how each was met:
