@@ -10,6 +10,8 @@ thing that gives it meaning. Two identical 26¢ prices on the same soccer
 contract — one at kickoff, one late in the game at 1–1 with a red card — mean
 opposite things, and the page makes you *feel* that rather than telling you.
 
+**Live at: https://lyndonkl.github.io/understandingsoccer/**
+
 ## Publishing (GitHub Pages)
 
 The site is fully static and lives in **`/docs`**. No build step.
