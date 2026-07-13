@@ -17,7 +17,7 @@
   <span class="hud-price" id="hud-price"></span>
 </header>
 
-<div class="nogl-note">This browser can’t run the WebGL unit layer. The full argument still reads below — every figure in the prose stands on its own.</div>
+<div class="nogl-note">This browser can’t run the WebGL unit layer. The full argument still reads below; every figure in the prose stands on its own.</div>
 
 <main class="scrolly">
   <div class="stage-wrap" aria-hidden="true">
@@ -31,7 +31,7 @@
     <article class="card hero" data-beat="hero">
       <span class="kicker">KXWCADVANCE-26JUL11ARGSUI-SUI · Kalshi · Arrowhead Stadium, Kansas City · July 11, 2026</span>
       <h1>The Two Meanings<br>of 26<span class="cents">¢</span></h1>
-      <p class="dek">At 9:00&nbsp;PM, a contract paying $1 if Switzerland knocked Argentina out of the World Cup cost <span class="price">26¢</span>. Three hours later — after a goal, an equalizer, and a red card — it cost <span class="price">26¢</span> again.</p>
+      <p class="dek">At 9:00&nbsp;PM, a contract paying $1 if Switzerland knocked Argentina out of the World Cup cost <span class="price">26¢</span>. Three hours later, after a goal, an equalizer, and a red card, it cost <span class="price">26¢</span> again.</p>
       <p class="dek"><em>It was not the same price.</em></p>
       <p class="scroll-hint">scroll ↓</p>
     </article>
@@ -41,25 +41,43 @@
       <span class="eyebrow">First: the naive reading</span>
       <h2>A price is a count</h2>
       <p>A Kalshi contract settles at <span class="num">$1</span> if the event happens, <span class="num">$0</span> if it doesn’t. So a price of <span class="price">26¢</span> <span class="chip real">real</span> reads like a probability: the crowd trades as if about <span class="num">26 in 100</span> ways tonight could go end with Switzerland advancing.</p>
-      <p>Each dot here is one ten-thousandth of that belief — one possible ending of the match. <span class="num">2,600</span> are lit. This is the market’s claim, drawn as a census of futures.</p>
+      <p>Each dot here is one ten-thousandth of that belief: one possible ending of the match. <span class="num">2,600</span> are lit. This is the market’s claim, drawn as a census of futures.</p>
     </article>
 
     <!-- BEAT 2 — nobody set this number -->
     <article class="card" data-beat="book">
       <span class="eyebrow">Why the naive reading is incomplete</span>
       <h2>Nobody set this number</h2>
-      <p>There is no oracle behind the curtain. Kalshi is an exchange: a ledger of resting bids and asks. The price is only where the most eager buyer met the least reluctant seller — an equilibrium, renegotiated every second, between statistical modeling and human feeling.</p>
-      <p>The queue includes retail fans, and it includes professional market makers — Susquehanna has quoted Kalshi markets since 2024, and Kalshi’s own trading affiliate participates. “Peer-to-peer” doesn’t mean amateur.</p>
-      <p class="aside">Beside this card: the actual order book of this week’s semifinal market, England&nbsp;v&nbsp;Argentina <span class="chip real">real</span> — captured July 13, 2026 (UTC) from the public API.</p>
+      <p>There is no oracle behind the curtain. Kalshi is an exchange. Buyers who will pay at most <span class="price">54¢</span> rest on one side of the book; sellers who will accept no less than <span class="price">55¢</span> rest on the other. The one-cent gap between them is called the spread. While everyone waits, nothing trades.</p>
+      <p>The queue is not all amateurs, either. Susquehanna has quoted Kalshi markets since 2024, and Kalshi’s own trading affiliate participates.</p>
+      <p class="aside">Beside this card: the actual resting orders in this week’s semifinal market, England&nbsp;v&nbsp;Argentina <span class="chip real">real</span>, captured July 13, 2026 from the public API.</p>
     </article>
 
-    <!-- BEAT 3 — kickoff = capability -->
+    <!-- BEAT 2b — the tape -->
+    <article class="card" data-beat="prints">
+      <span class="eyebrow">How a price becomes a print</span>
+      <h2>The tape answers the question</h2>
+      <p>A resting order changes nothing. The price moves only when someone stops waiting: a buyer takes the sellers’ <span class="price">55¢</span>, or a seller hits the buyers’ <span class="price">54¢</span>. Each acceptance prints a trade. The last print is the price you read.</p>
+      <p>The public tape shows which side blinked. The thirty most recent prints in this market are all buyers crossing at <span class="price">55¢</span> <span class="chip real">real</span>. That is why the price sits at 55: eager buyers keep accepting the most reluctant sellers’ terms.</p>
+      <p><span class="num">7.9&nbsp;million</span> contracts rest at 55¢. If buyers eat through them all, the next print reads <span class="price">56¢</span>. A price moves one consumed level at a time.</p>
+    </article>
+
+    <!-- BEAT 3a — the two dice -->
+    <article class="card" data-beat="dice">
+      <span class="eyebrow">The model’s two ingredients</span>
+      <h2>Two dice, loaded differently</h2>
+      <p>Before any grid, meet its ingredients. The model treats each team’s goals as a Poisson process: a counting recipe that turns one number, the expected-goal rate λ, into a full spread of outcomes.</p>
+      <p>Argentina at λ&nbsp;≈&nbsp;<span class="num">1.8</span> <span class="chip model">model</span>: 16% no goals, 29% one, 27% two, 16% three. Switzerland at λ&nbsp;≈&nbsp;<span class="num">0.9</span> <span class="chip model">model</span>: 42% blank, 36% one goal, 16% two.</p>
+      <p>Those are the two bars beside this card, drawn in dots. Argentina’s mass sits on one and two goals; Switzerland’s crowds zero and one. Multiply the two dice and every final score follows.</p>
+    </article>
+
+    <!-- BEAT 3b — kickoff = capability -->
     <article class="card" data-beat="kickoff">
       <span class="eyebrow">The first 26¢ · 9:00 pm</span>
       <h2>At kickoff, 26¢ means <em>capability</em></h2>
       <p>Ninety-plus minutes ahead, eleven against eleven, score 0–0. The market had said <span class="price">25–26¢</span> <span class="chip real">real</span> for four straight days.</p>
-      <p>Run the standard match model — two Poisson scoring processes, the workhorse of soccer quants since 1982 — and calibrate it to the market’s own number: Argentina ≈ <span class="num">1.8</span> expected goals, Switzerland ≈ <span class="num">0.9</span> <span class="chip model">model</span>. The dots re-sort into every final score. Switzerland’s <span class="num">26%</span> is mostly <em>out-scoring a stronger team outright</em>, plus a slice of draws that survive extra time.</p>
-      <p>This 26¢ is cold. It prices a long horizon where variance is the underdog’s friend.</p>
+      <p>Multiply the dice and the grid appears: every final score, sized by its share of the 10,000 endings <span class="chip model">model</span>. Each cell’s dot count is Argentina’s row share times Switzerland’s column share. A 1–0 Argentina win is the single likeliest score, near <span class="num">12%</span>. Switzerland’s lit mass collects where its column beats Argentina’s row, plus a slice of every draw cell, because a level score at ninety sends a knockout tie to extra time.</p>
+      <p>Count the lit dots and you get the price. This 26¢ is cold: capability over a long, high-variance horizon.</p>
     </article>
 
     <!-- BEAT 4a — the goal -->
@@ -67,15 +85,17 @@
       <span class="eyebrow">The match begins to happen</span>
       <h2>Minute 10: the favorite scores</h2>
       <p>Alexis Mac Allister heads in a Messi corner. The contract collapses from <span class="price">25¢</span> to <span class="price">12¢</span> within minutes <span class="chip real">real</span>.</p>
-      <p>Nothing about Switzerland’s <em>ability</em> changed. What changed is the state: one of the two goals they’d likely need is now a goal they must claw back, from a team that almost never trails twice.</p>
+      <p>Switzerland’s ability did not change; the ledger did. Over the remaining eighty minutes the model expects roughly <span class="num">1.6</span> more Argentina goals and <span class="num">0.8</span> Swiss ones <span class="chip model">model</span>. An equalizer at some point is barely better than a coin flip (<span class="num">54%</span>), and scoring it only buys back the problem Switzerland started with. From a goal up, the model makes Argentina an <span class="num">83%</span> favorite to finish the job in regulation <span class="chip model">model</span>.</p>
+      <p>The cold read of this state: about <span class="price cold">10¢</span> <span class="chip model">model</span>. The market paid <span class="price">12¢</span> <span class="chip real">real</span>.</p>
     </article>
 
     <!-- BEAT 4b — the equalizer -->
     <article class="card" data-beat="equalizer">
       <span class="eyebrow">The most crowded minute</span>
       <h2>Minute 67: 1–1, and the market floods</h2>
-      <p>Dan Ndoye slips the equalizer under Martínez. The price triples in two minutes: <span class="price">10¢ → 32¢</span> <span class="chip real">real</span>.</p>
-      <p>In the single minute of the goal, <span class="num">1.28&nbsp;million</span> contracts changed hands — roughly <span class="num">22×</span> the pre-kickoff rate <span class="chip real">real</span>. That volume spike is what emotion looks like in market microstructure: everyone repricing at once, few agreeing on the number.</p>
+      <p>Dan Ndoye slips the equalizer under Martínez. Within one minute, this contract trades at <span class="price">10¢</span> and at <span class="price">35¢</span> <span class="chip real">real</span>. Not in sequence. In the same sixty seconds.</p>
+      <p>The next minute, <span class="num">1.28&nbsp;million</span> contracts change hands, roughly <span class="num">22×</span> the pre-kickoff rate <span class="chip real">real</span>. Heavy volume alone proves interest. Heavy volume across a 25-cent range proves disagreement: thousands of traders repricing the same goal faster than they can agree on what it is worth.</p>
+      <p>The pale band around the price line is each minute’s full traded range. Watch it blow open here, and stay open.</p>
     </article>
 
     <!-- BEAT 4c — the red card -->
@@ -83,24 +103,35 @@
       <span class="eyebrow">The alarm</span>
       <h2>Minute 72: red card</h2>
       <p>Breel Embolo, already booked, goes down too easily. VAR review. Second yellow. Switzerland will finish the night with ten men.</p>
-      <p>The equalizer’s hope is repriced in seconds: <span class="price alarm">32¢ → 16¢</span> <span class="chip real">real</span>. Retail sees a team crippled. But watch what the price does next — because two different kinds of trader are now reading two different clocks.</p>
+      <p>The equalizer’s hope is repriced in seconds: <span class="price alarm">32¢ → 16¢</span> <span class="chip real">real</span>. A team that needed goals now cannot spare the bodies to chase one.</p>
+      <p>But watch what the price does next. The same crippled state has a second, colder reading.</p>
     </article>
 
-    <!-- BEAT 4d — the climb -->
+    <!-- BEAT 4d — two readings -->
+    <article class="card" data-beat="twoclocks">
+      <span class="eyebrow">Two readings of ten men</span>
+      <h2>The story and the clock</h2>
+      <p>The story reading: Switzerland is down a man for fifty-plus minutes, hope just cancelled, sell.</p>
+      <p>The clock reading: Argentina now has <em>fewer minutes</em> in which to convert its advantage, and every scoreless minute makes the draw, and the penalty shootout behind it, more likely.</p>
+      <p>The dashed line is the clock reading made precise: this page’s model, fed only score, cards, and time remaining, values survival at <span class="price cold">12¢</span> right after the red card and drifts toward <span class="price cold">17¢</span> at the whistle <span class="chip model">model</span>.</p>
+      <p class="aside">Who holds each reading? Kalshi does not disclose who trades. Treat the two readings as an interpretation of the price’s behavior, and never as a census of traders.</p>
+    </article>
+
+    <!-- BEAT 4e — the climb -->
     <article class="card" data-beat="climb">
-      <span class="eyebrow">Theta decay, live</span>
+      <span class="eyebrow">Time decay, live</span>
       <h2>Minutes 73–90: the survival climb</h2>
-      <p>Switzerland stops trying to win. Ten men, one point of contact: hold 1–1. And the price climbs a cent at a time — <span class="price">16 → 19 → 22 → 25</span> <span class="chip real">real</span> — as each scoreless minute makes the draw more certain.</p>
-      <p>Human traders watch the man down; the clock-watchers — algorithmic and otherwise — buy every tick of dying time. At the regulation whistle: <span class="price">26¢</span>.</p>
-      <p class="aside">Same digits, third meaning, one screen over: at minute ~85 Argentina’s <em>regulation-time win</em> contract also read <span class="price">26¢</span> <span class="chip real">real</span> — a favorite racing the same clock from the other side.</p>
+      <p>Switzerland stops trying to win. Ten men, one objective: hold 1–1 to the whistle. The price climbs a cent at a time, <span class="num">16 → 19 → 22 → 25</span> <span class="chip real">real</span>.</p>
+      <p>Now read the two lines together. The clock alone lifts the model from <span class="price cold">12¢</span> to <span class="price cold">17¢</span> <span class="chip model">model</span>. The market climbed from <span class="price">16¢</span> to <span class="price">26¢</span> <span class="chip real">real</span>. The amber wedge between the lines is the part the clock cannot explain. It gets a name two beats from now.</p>
+      <p class="aside">Same digits, third meaning, one screen over: at minute ~85 Argentina’s <em>regulation-time win</em> contract also read <span class="price">26¢</span> <span class="chip real">real</span>. A favorite racing the same clock from the other side.</p>
     </article>
 
     <!-- BEAT 5 — survival -->
     <article class="card" data-beat="survival">
       <span class="eyebrow">The second 26¢ · ~11:05 pm</span>
       <h2>At the whistle, 26¢ means <em>survival</em></h2>
-      <p>Regulation ends 1–1. The contract costs <span class="price">26¢</span> again <span class="chip real">real</span> — and every world inside it has been replaced.</p>
-      <p>The capability worlds are gone. What remains: score through a four-to-one headwind with ten men (<span class="num">rare</span>), or hold 0–0 for thirty more minutes and take Argentina to penalties — roughly a coin flip <span class="chip model">model</span>.</p>
+      <p>Regulation ends 1–1. The contract costs <span class="price">26¢</span> again <span class="chip real">real</span>, and every world inside it has been replaced.</p>
+      <p>The capability worlds are gone. What remains: score through a four-to-one headwind with ten men (<span class="num">rare</span>), or hold 0–0 for thirty more minutes and take Argentina to penalties, roughly a coin flip <span class="chip model">model</span>.</p>
       <p>Kickoff’s 26¢ was a bet on ability across time. This 26¢ is a bet <em>against</em> time itself. Same number, rebuilt from different stuff.</p>
     </article>
 
@@ -109,25 +140,25 @@
       <span class="eyebrow">Reading the gap</span>
       <h2>The nine cents of feeling</h2>
       <p>A cold model prices this endgame near <span class="price cold">17¢</span> <span class="chip model">model</span>: about <span class="num">4¢</span> of “ten men win extra time” plus <span class="num">13¢</span> of “reach penalties, flip the coin.” The crowd paid <span class="price">26¢</span> <span class="chip real">real</span>.</p>
-      <p>The <span class="price hot">9¢</span> band on top is what the model cannot see. Some of it is feeling: the narrative premium of heroic defiance on TV; holders who bought at 28¢ refusing to sell at a loss. Some of it may be knowledge: legs, bodies, a low block that looked unbreakable. <em>A price never tells you which.</em></p>
-      <p class="aside">Honesty notes: the gap runs both ways — at the equalizer the market lagged <em>below</em> this model (<span class="num">32¢</span> vs <span class="num">35%</span>); fees explain at most <span class="num">1.75¢</span>; and the model itself is an assumption, calibrated to the kickoff price with red-card effects from published World Cup research.</p>
+      <p>The <span class="price hot">9¢</span> band on top is the wedge you watched grow, and the model cannot see inside it. Some of it is feeling: the narrative premium of heroic defiance on TV; holders who bought at 28¢ refusing to sell at a loss. Some of it may be knowledge: legs, bodies, a low block that looked unbreakable. <em>A price never tells you which.</em></p>
+      <p class="aside">Honesty notes: the gap runs both ways (at the equalizer the market lagged <em>below</em> this model, <span class="num">32¢</span> vs <span class="num">35%</span>); fees explain at most <span class="num">1.75¢</span>; and the model itself is an assumption, calibrated to the kickoff price with red-card effects from published World Cup research.</p>
     </article>
 
     <!-- BEAT 7 — resolution -->
     <article class="card" data-beat="resolution">
       <span class="eyebrow">Extra time</span>
       <h2>The ending that arrived</h2>
-      <p>The ten men hold, and hold — the price touches <span class="price">35¢</span> as penalties near <span class="chip real">real</span>. Then, minute 112: Julián Álvarez curls one into the top corner. <span class="price">33¢ → 2¢</span> in one minute. Lautaro adds a third. The contract settles at <span class="num">$0</span>.</p>
-      <p>Was the 26¢ <em>wrong</em>? No. A 26% event fails to arrive 74% of the time; judging a price by one outcome is the oldest mistake in probability. What the market actually sold, all night, was <em>meaning</em> — a live translation of the game state into one number.</p>
+      <p>The ten men hold, and hold; the price touches <span class="price">35¢</span> as penalties near <span class="chip real">real</span>. Then, minute 112: Julián Álvarez curls one into the top corner. <span class="price">33¢ → 2¢</span> in one minute. Lautaro adds a third. The contract settles at <span class="num">$0</span>.</p>
+      <p>Was the 26¢ <em>wrong</em>? No. A 26% event fails to arrive 74% of the time; judging a price by one outcome is the oldest mistake in probability. What the market actually sold, all night, was <em>meaning</em>: a live translation of the game state into one number.</p>
     </article>
 
     <!-- BEAT 8 — shutdown -->
     <article class="card" data-beat="shutdown">
       <span class="eyebrow">The lens, elsewhere · Washington, fall 2025</span>
       <h2>Two 17¢, forty-three days apart</h2>
-      <p>The 2025 government shutdown became the longest in history — 43 days. Kalshi ran markets on its length.</p>
-      <p><strong>Sept 23</strong>, eight days before it began: “lasts <span class="num">&gt;35 days</span>” traded at <span class="price">17¢</span> <span class="chip real">real</span> — a lottery ticket on the unthinkable, when the median forecast was 4½ days. It settled <span class="num">YES</span>.</p>
-      <p><strong>Nov 5</strong>, day 36, record just broken, fourteen failed votes deep: “lasts <span class="num">&gt;60 days</span>” traded at <span class="price">17¢</span> <span class="chip real">real</span> — an exhaustion tail on a crisis with no visible exit. It settled <span class="num">NO</span>.</p>
+      <p>The 2025 government shutdown became the longest in history: 43 days. Kalshi ran markets on its length.</p>
+      <p><strong>Sept 23</strong>, eight days before it began: “lasts <span class="num">&gt;35 days</span>” traded at <span class="price">17¢</span> <span class="chip real">real</span>. A lottery ticket on the unthinkable, when the median forecast was 4½ days. It settled <span class="num">YES</span>.</p>
+      <p><strong>Nov 5</strong>, day 36, record just broken, fourteen failed votes deep: “lasts <span class="num">&gt;60 days</span>” traded at <span class="price">17¢</span> <span class="chip real">real</span>. An exhaustion tail on a crisis with no visible exit. It settled <span class="num">NO</span>.</p>
       <p>Same number. One priced “surely not,” the other “why would it ever end.” You cannot read either without the date attached.</p>
     </article>
 
@@ -135,8 +166,8 @@
     <article class="card" data-beat="nyc">
       <span class="eyebrow">The lens, elsewhere · New York, fall 2025</span>
       <h2>A survival price in slow motion</h2>
-      <p>Kalshi’s market on the NYC mayoral race spent October drifting <span class="price">85¢ → 91¢ → 92¢ → 94¢</span> <span class="chip real">real</span> for Mamdani — with no comparable news. The climb <em>was</em> the clock: calendar days draining from any comeback, the same theta-decay that lifted ten-man Switzerland, stretched over weeks.</p>
-      <p>And when Eric Adams — the event that was supposed to threaten Mamdani — actually withdrew on Sept&nbsp;28, the price went <em>up</em>, <span class="price">80¢ → 84¢</span> <span class="chip real">real</span>. The missing 20¢ had been structural uncertainty about the field, not belief in an opponent. The event revealed what the number had been made of.</p>
+      <p>Kalshi’s market on the NYC mayoral race spent October drifting <span class="price">85¢ → 91¢ → 92¢ → 94¢</span> <span class="chip real">real</span> for Mamdani, with no comparable news. The climb <em>was</em> the clock: calendar days draining from any comeback, the same time decay that lifted ten-man Switzerland, stretched over weeks.</p>
+      <p>And when Eric Adams, the event that was supposed to threaten Mamdani, actually withdrew on Sept&nbsp;28, the price went <em>up</em>: <span class="price">80¢ → 84¢</span> <span class="chip real">real</span>. The missing 20¢ had been structural uncertainty about the field, and the event revealed what the number had been made of.</p>
     </article>
 
     <!-- BEAT 10 — coda -->
@@ -144,7 +175,7 @@
       <span class="eyebrow">Julian Jaynes, and the point</span>
       <h2>Understanding is metaphor</h2>
       <p>Jaynes argued that we understand anything by mapping it onto something familiar enough to feel. A market price is the unfamiliar thing: one number compressing capability, survival, structure, panic, conviction, and time.</p>
-      <p>The familiar thing is the event itself — the pitch, the clock, the man down, the calendar. Translate the number back into its state of the world and it opens; read it bare and it lies to you politely.</p>
+      <p>The familiar thing is the event itself: the pitch, the clock, the man down, the calendar. Translate the number back into its state of the world and it opens; read it bare and it lies to you politely.</p>
       <p><em>26¢ never meant “26%.” It meant</em> these worlds, counted, right now. <em>One price is never one thing.</em></p>
     </article>
 
@@ -153,39 +184,42 @@
 
 <footer class="tail" id="method">
   <h2>Method, data &amp; sources</h2>
-  <p>Every quantity above is tagged. <span class="chip real">real</span> = a recorded market price, volume, or verified event fact with a primary source. <span class="chip model">model</span> = output of this page’s labeled statistical model. <span class="chip infer">inferred</span> = a stated alignment judgment (e.g. mapping UTC candle timestamps to match minutes; kickoff 01:00 UTC per NBC’s “9 PM ET”).</p>
+  <p>Every quantity above is tagged. <span class="chip real">real</span> = a recorded market price, volume, trade, or verified event fact with a primary source. <span class="chip model">model</span> = output of this page’s labeled statistical model. <span class="chip infer">inferred</span> = a stated alignment judgment (e.g. mapping UTC candle timestamps to match minutes; kickoff 01:00 UTC per NBC’s “9 PM ET”).</p>
 
   <h3>The soccer market (all prices real)</h3>
   <ul>
-    <li>Market: <span class="src">KXWCADVANCE-26JUL11ARGSUI-SUI</span>, “Will Switzerland advance past Argentina?” — 1-minute close prices and volumes pulled from Kalshi’s public API (<span class="src">api.elections.kalshi.com/trade-api/v2</span>, candlesticks endpoint, pulled July 12–13, 2026 UTC). Kickoff-hour closes 25–26¢; 03:05–03:06 UTC closes 26¢; equalizer-minute volume 1,282,455 contracts vs pre-kickoff mean ≈ 58,800/min.</li>
-    <li>Match facts: NBC Sports live blog · FOX Sports boxscore · Yahoo Sports match report (Argentina 3–1 Switzerland a.e.t., July 11, 2026; goals 10′, 67′, 112′, 120′+; Embolo second yellow 72′–73′ — sources differ by one minute and we say so).</li>
+    <li>Market: <span class="src">KXWCADVANCE-26JUL11ARGSUI-SUI</span>, “Will Switzerland advance past Argentina?” · 1-minute close prices and volumes from Kalshi’s public API (<span class="src">api.elections.kalshi.com/trade-api/v2</span>, candlesticks endpoint, pulled July 12–13, 2026 UTC); intraminute high/low from the same endpoint (OHLC re-pull, July 13, 2026 16:23 UTC). Kickoff-hour closes 25–26¢; 03:05–03:06 UTC closes 26¢; equalizer minute (02:29 UTC) traded a 10–35¢ range; equalizer-minute volume 1,282,455 contracts vs pre-kickoff mean ≈ 58,800/min.</li>
+    <li>Match facts: NBC Sports live blog · FOX Sports boxscore · Yahoo Sports match report (Argentina 3–1 Switzerland a.e.t., July 11, 2026; goals 10′, 67′, 112′, 120′+; Embolo second yellow 72′–73′; sources differ by one minute and we say so).</li>
     <li>Order book snapshot: England v Argentina semifinal market (<span class="src">KXWCADVANCE-26JUL15ENGARG-ENG</span>), public API, July 13, 2026 ~06:05 UTC.</li>
+    <li>Trade tape: 30 most recent public prints on the same semifinal market (<span class="src">/markets/trades</span>, pulled July 13, 2026 16:23 UTC); all 30 were taker-side YES at $0.55. Equalizer-window tape on the quarterfinal market: the API returned its 1,000-trade page cap for 02:29–02:32 UTC alone.</li>
   </ul>
 
   <h3>The model (labeled wherever it appears)</h3>
   <ul>
     <li>Structure: independent double-Poisson match model (Maher 1982; Dixon &amp; Coles 1997 lineage), time-scaled in play; extra time at ⅓ of full-match rates; penalties treated as 50/50 (assumption).</li>
     <li>Calibration: total goals 2.7 per match (WC 2018 ≈ 2.64, WC 2022 ≈ 2.69, Frontiers in Sports &amp; Active Living 2024; the 2026 tournament is running hotter, ≈ 2.9); λ split solved so that P(Switzerland advances) equals the real kickoff price of 26¢ → Argentina 1.84, Switzerland 0.87.</li>
-    <li>Red card: sanctioned team’s scoring rate × 0.53, opponent × 2.24 (Červený, van&nbsp;Ours &amp; van&nbsp;Tuijl 2017, <em>Empirical Economics</em> — 320 World Cup matches). Sanity anchor: of EPL teams drawing when reduced to ten, 65% lost / 30% drew / 5% won (Chowdhury 2015).</li>
-    <li>Under these assumptions the model’s late-game “fair value” is ≈ 17¢ vs the traded 26¢. The 9¢ gap is presented as an interpretation, not a fact; alternative published multipliers (Titman et&nbsp;al. 2015; Ridder et&nbsp;al. 1994; Maia et&nbsp;al. 2023) would move it by a few cents either way.</li>
+    <li>Red card: sanctioned team’s scoring rate × 0.53, opponent × 2.24 (Červený, van&nbsp;Ours &amp; van&nbsp;Tuijl 2017, <em>Empirical Economics</em>, 320 World Cup matches). Sanity anchor: of EPL teams drawing when reduced to ten, 65% lost / 30% drew / 5% won (Chowdhury 2015).</li>
+    <li>Fair-value overlay: the model re-evaluated each minute along the real timeline using only the verified state (score, red card, clock). The match-clock-to-UTC mapping is <span class="chip infer">inferred</span>, anchored at the verified event candles (kickoff 01:00, goal 01:11, equalizer 02:29, red card 02:33, whistle 03:05, ET goals 03:33/03:44), with halftime and the pre-ET break held flat. Conditional values quoted on cards: P(advance | 0–1 at 10′) ≈ 10¢; P(Argentina wins in regulation | 1–0 at 10′) ≈ 83%; fair value 12¢ at the red card → 17¢ at the whistle.</li>
+    <li>Under these assumptions the model’s late-game fair value is ≈ 17¢ vs the traded 26¢. The 9¢ gap is presented as an interpretation, and alternative published multipliers (Titman et&nbsp;al. 2015; Ridder et&nbsp;al. 1994; Maia et&nbsp;al. 2023) would move it by a few cents either way.</li>
+    <li>Who trades: Kalshi does not disclose trader composition (Sportico 2025). The “story reading vs clock reading” framing is an interpretation of price behavior, and the page says so where it appears.</li>
   </ul>
 
   <h3>Exchange mechanics</h3>
   <ul>
     <li>Binary $1/$0 contracts, 1–99¢ pricing, YES/NO complementarity, central limit order book: Kalshi’s own explainer and Help Center; confirmed live via the public API (<span class="src">market_type: binary</span>, <span class="src">notional_value: $1</span>).</li>
-    <li>Fees ≈ 0.07 × P × (1−P) per contract — at most 1.75¢ at 50¢ (Kalshi Help Center; pm.wiki; API <span class="src">fee_type: quadratic</span>).</li>
+    <li>Fees ≈ 0.07 × P × (1−P) per contract, at most 1.75¢ at 50¢ (Kalshi Help Center; pm.wiki; API <span class="src">fee_type: quadratic</span>).</li>
     <li>Participants include institutional market makers (Susquehanna, announced by Kalshi April 2024) and Kalshi’s own trading affiliate (Sportico, 2025). CFTC-designated contract market since Nov 2020; sports contracts since Jan 2025; Third Circuit ruling April 2026; litigation ongoing in several states.</li>
   </ul>
 
   <h3>Generalization markets (all prices real, dated)</h3>
   <ul>
-    <li>Shutdown 2025 (<span class="src">KXGOVSHUTLENGTH</span>): Sept 23 “&gt;35 days” 17% and median 4.5 days — Kalshi newsroom, Sept 23, 2025. Nov 5 “&gt;60 days” 17% — Kalshi newsroom, Nov 5, 2025. Settlement facts (43 days, Oct 1–Nov 12) — Wikipedia/NADO/CBS/NBC. Intraday curves for these settled markets are no longer publicly retrievable, so this page shows only the dated, sourced points.</li>
-    <li>NYC mayor 2025 (<span class="src">KXMAYORNYCPARTY-25-D</span>): 83¢ (Aug 24) · 80¢ (Sept 11) · 84¢ (Sept 29, after Adams withdrew) · 85¢ (Oct 6) · 91¢ (Oct 19) · 92¢ (Oct 23) · 94¢ (Oct 31) — Internet Archive snapshots of Kalshi’s own pages and dated Fox Business / Gothamist reports.</li>
+    <li>Shutdown 2025 (<span class="src">KXGOVSHUTLENGTH</span>): Sept 23 “&gt;35 days” 17% and median 4.5 days · Kalshi newsroom, Sept 23, 2025. Nov 5 “&gt;60 days” 17% · Kalshi newsroom, Nov 5, 2025. Settlement facts (43 days, Oct 1–Nov 12) · Wikipedia/NADO/CBS/NBC. Intraday curves for these settled markets are no longer publicly retrievable, so this page shows only the dated, sourced points.</li>
+    <li>NYC mayor 2025 (<span class="src">KXMAYORNYCPARTY-25-D</span>): 83¢ (Aug 24) · 80¢ (Sept 11) · 84¢ (Sept 29, after Adams withdrew) · 85¢ (Oct 6) · 91¢ (Oct 19) · 92¢ (Oct 23) · 94¢ (Oct 31) · Internet Archive snapshots of Kalshi’s own pages and dated Fox Business / Gothamist reports.</li>
   </ul>
 
   <h3>Primary sources</h3>
   <ul>
-    <li class="src">api.elections.kalshi.com/trade-api/v2 (public; candlesticks, order book, markets, series)</li>
+    <li class="src">api.elections.kalshi.com/trade-api/v2 (public; candlesticks, order book, trade tape, markets, series)</li>
     <li class="src">nbcsports.com/soccer/live/argentina-vs-switzerland-live-updates-…-2026-fifa-world-cup-july-11</li>
     <li class="src">foxsports.com/soccer/fifa-world-cup-men-argentina-vs-switzerland-jul-11-2026-game-boxscore-607930</li>
     <li class="src">sports.yahoo.com/articles/argentina-vs-switzerland-live-score-200002967.html</li>
@@ -203,7 +237,7 @@
     <li class="src">foxbusiness.com &amp; gothamist.com dated reports of Kalshi NYC prices (June 24 / Sept 29 / Nov 3, 2025)</li>
   </ul>
 
-  <p class="aside" style="margin-top:1.4rem">Built as a fully static page — vanilla WebGL for the 10,000-unit layer, D3 for scales and annotation, no build step. The unit population is fixed for the whole page; every transition re-sorts the same 10,000 objects. Full research notes and raw API pulls live in the repository’s <span class="src">research/</span> directory.</p>
+  <p class="aside" style="margin-top:1.4rem">Built as a fully static page: vanilla WebGL for the 10,000-unit layer, D3 for scales and annotation, no build step. The unit population is fixed for the whole page; every transition re-sorts the same 10,000 objects. Full research notes and raw API pulls live in the repository’s <span class="src">research/</span> directory.</p>
 </footer>
 
 <script src="vendor/d3.v7.min.js"></script>

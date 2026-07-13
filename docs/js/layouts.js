@@ -81,6 +81,56 @@ export function worldGrid(N, rect, { yesCount, hotCount = 0, dimNo = false }) {
 }
 
 /* ------------------------------------------------------------------ */
+/* Beat "dice": the two Poisson marginals as unit-bar histograms.
+ * Top block = team A's goal-count distribution (0..4+), bottom = team B's.
+ * Half the population works each histogram; both use a common baseline so
+ * bar heights read as position-on-common-scale. */
+function largestRemainder(total, probs) {
+  const raw = probs.map(p => p * total);
+  const counts = raw.map(Math.floor);
+  let short = total - counts.reduce((a, b) => a + b, 0);
+  const order = raw
+    .map((v, i) => ({ i, frac: v - Math.floor(v) }))
+    .sort((a, b) => b.frac - a.frac);
+  for (let k = 0; k < short; k++) counts[order[k % order.length].i]++;
+  return counts;
+}
+
+export function marginalBars(N, rect, { probsA, probsB }) {
+  const s = blankState(N);
+  const half = Math.floor(N / 2);
+  const bins = probsA.length;
+  const binW = rect.w / bins;
+  const rowH = rect.h * 0.40;
+  const baseA = rect.y + rowH;             // top histogram baseline
+  const baseB = rect.y + rect.h;           // bottom histogram baseline
+  const size = 2.3;
+  const step = size + 0.9;
+  const cols = Math.max(Math.floor((binW * 0.7) / step), 6);
+
+  function place(offset, count, alloc, base, rgb, alpha) {
+    let cursor = offset;
+    for (let b = 0; b < bins; b++) {
+      const x0 = rect.x + b * binW + (binW - cols * step) / 2;
+      for (let k = 0; k < alloc[b]; k++) {
+        const i = cursor++;
+        const gx = k % cols, gy = Math.floor(k / cols);
+        s.x[i] = x0 + (gx + 0.5) * step;
+        s.y[i] = base - (gy + 0.5) * step;
+        paint(s, i, rgb, alpha);
+        s.size[i] = size;
+      }
+    }
+    return cursor;
+  }
+  const allocA = largestRemainder(half, probsA);
+  const allocB = largestRemainder(N - half, probsB);
+  let cursor = place(0, half, allocA, baseA, PALETTE.chalk, 0.75);
+  place(cursor, N - half, allocB, baseB, PALETTE.cold, 0.9);
+  return s;
+}
+
+/* ------------------------------------------------------------------ */
 /* Beats 3 & 5: scoreline grid. cells: [{i, j, prob, yesFrac}] where
  * (i, j) are FINAL goals (capped at kMax for display), prob sums to 1,
  * and yesFrac is the fraction of that cell's worlds that end YES

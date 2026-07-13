@@ -10,11 +10,15 @@
 import { createEngine } from './engine.js';
 import {
   PALETTE, fieldScatter, worldGrid, scorelineGrid, priceColumn,
-  glyph, glyphPixels, smallMultiples, twinGlyphs,
+  glyph, glyphPixels, smallMultiples, twinGlyphs, marginalBars,
 } from './layouts.js';
-import { outcomeFromState, advanceProbFromState, solveLambdasForPrice, allocateUnits } from './model.js';
+import {
+  poissonPmf, outcomeFromState, advanceProbFromState, advanceProbET,
+  solveLambdasForPrice, allocateUnits,
+} from './model.js';
 import { ADVANCE, EVENTS, META } from '../data/argsui-prices.js';
 import { ORDERBOOK } from '../data/orderbook.js';
+import { TAPE, EQUALIZER_WINDOW } from '../data/tape.js';
 
 const N = 10000;
 const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -61,6 +65,59 @@ function buildKickoffCells() {
   return { cells, alloc };
 }
 const KCELLS = buildKickoffCells();
+
+/* The two Poisson marginals (0..4+, tail aggregated) for the dice beat. */
+function marginalProbs(lam) {
+  const p = [];
+  let acc = 0;
+  for (let k = 0; k < 4; k++) { const v = poissonPmf(k, lam); p.push(v); acc += v; }
+  p.push(Math.max(1 - acc, 0));
+  return p;
+}
+const MARGA = marginalProbs(CAL.lamA);
+const MARGB = marginalProbs(CAL.lamB);
+
+/* Model conditionals quoted on cards (all MODEL). */
+const AT10 = advanceProbFromState({ ...kickoffState, minute: 10, scoreA: 1, scoreB: 0 });
+const FAIR72 = advanceProbFromState({ ...kickoffState, minute: 72, scoreA: 1, scoreB: 1, redCard: 'B' }).pAdvance;
+
+/* Minute-by-minute model fair value along the real timeline.
+ * Match-clock <-> UTC mapping is INFERRED, anchored at the verified event
+ * candles (kickoff 01:00, goal 01:11, equalizer 02:29, red card 02:33,
+ * whistle 03:05, ET goals 03:33/03:44); halftime and the pre-ET break are
+ * held flat. States between anchors are the verified score/card states. */
+const TAU_ANCHORS = [
+  [0, '01:00'], [10, '01:11'], [45, '01:48'], [45, '02:04'],
+  [67, '02:29'], [72, '02:33'], [90, '03:05'], [90, '03:10'],
+  [112, '03:33'], [120, '03:44'],
+];
+function tauAtUtc(t) {
+  const A = TAU_ANCHORS.map(([m, u]) => [m, utcMin(u)]);
+  if (t <= A[0][1]) return 0;
+  for (let k = 0; k < A.length - 1; k++) {
+    const [m0, u0] = A[k], [m1, u1] = A[k + 1];
+    if (t <= u1) {
+      if (u1 === u0) return m1;
+      return m0 + (m1 - m0) * (t - u0) / (u1 - u0);
+    }
+  }
+  return 120;
+}
+function fairValueAtTau(tau) {
+  const st = { scoreA: 0, scoreB: 0, redCard: null };
+  if (tau >= 10) st.scoreA = 1;
+  if (tau >= 67) st.scoreB = 1;
+  if (tau >= 72) st.redCard = 'B';
+  if (tau >= 112) st.scoreA = 2;
+  if (tau >= 120) st.scoreA = 3;
+  if (tau <= 90) {
+    return advanceProbFromState({ ...kickoffState, minute: tau, ...st }).pAdvance;
+  }
+  return advanceProbET({
+    lamA: CAL.lamA, lamB: CAL.lamB, etMinute: tau - 90,
+    redShort: RED_SHORT, redFull: RED_FULL, ...st,
+  });
+}
 
 /* ---------------------------------------------------------------- */
 /* Stage geometry                                                    */
@@ -109,7 +166,7 @@ const svg = d3.select('#anno');
 
 /* ---------------------------------------------------------------- */
 /* Persistent chart layer (real price line, beats goal→resolution)   */
-let chartG = null, xScale = null, yScale = null, clipRect = null;
+let chartG = null, xScale = null, yScale = null, clipRect = null, modelG = null;
 
 function ensureChart() {
   if (chartG) return;
@@ -150,6 +207,46 @@ function ensureChart() {
     .attr('height', d => vScale(d.vol))
     .attr('fill', 'rgba(152,160,146,0.28)');
 
+  // intraminute high-low envelope (real): the visible width of disagreement
+  const env = d3.area()
+    .x(d => xScale(utcMin(d.utc)))
+    .y0(d => yScale(d.l))
+    .y1(d => yScale(d.h))
+    .curve(d3.curveStepAfter);
+  chartG.append('g').attr('clip-path', 'url(#reveal)')
+    .append('path').datum(ADVANCE)
+    .attr('d', env)
+    .attr('fill', 'rgba(232,228,216,0.16)');
+
+  // model fair-value overlay: dashed line + gap bands vs the traded price.
+  // Revealed only from the beats that introduce it (b.model flag).
+  const FL = ADVANCE
+    .filter(d => d.utc >= '01:00')
+    .map(d => ({ utc: d.utc, close: d.sui, fv: fairValueAtTau(tauAtUtc(utcMin(d.utc))) }));
+  modelG = chartG.append('g').attr('class', 'model-layer').style('opacity', 0);
+  const mgc = modelG.append('g').attr('clip-path', 'url(#reveal)');
+  const mx = d => xScale(utcMin(d.utc));
+  mgc.append('path').datum(FL) // market above model: the premium band (hot)
+    .attr('d', d3.area().x(mx).y0(d => yScale(d.fv)).y1(d => yScale(Math.max(d.close, d.fv))).curve(d3.curveStepAfter))
+    .attr('fill', 'rgba(242,160,61,0.32)');
+  mgc.append('path').datum(FL) // market below model: the discount band (cold)
+    .attr('d', d3.area().x(mx).y0(d => yScale(Math.min(d.close, d.fv))).y1(d => yScale(d.fv)).curve(d3.curveStepAfter))
+    .attr('fill', 'rgba(123,200,232,0.26)');
+  mgc.append('path').datum(FL)
+    .attr('d', d3.line().x(mx).y(d => yScale(d.fv)).curve(d3.curveStepAfter))
+    .attr('fill', 'none')
+    .attr('stroke', '#7bc8e8')
+    .attr('stroke-width', 1.3)
+    .attr('stroke-dasharray', '5 3');
+  const ms = modelG.append('g');
+  ms.append('rect')
+    .attr('x', chartRect.x + 262).attr('y', chartRect.y + chartRect.h + 26)
+    .attr('width', 300).attr('height', 15)
+    .attr('fill', 'transparent').attr('stroke', '#7bc8e8').attr('stroke-dasharray', '3 3');
+  ms.append('text').attr('class', 'stamp model')
+    .attr('x', chartRect.x + 267).attr('y', chartRect.y + chartRect.h + 37.5)
+    .text('MODEL · FAIR VALUE, DASHED · MINUTE MAP INFERRED');
+
   // the real price line
   const line = d3.line()
     .x(d => xScale(utcMin(d.utc)))
@@ -180,10 +277,12 @@ function ensureChart() {
       .attr('y1', chartRect.y).attr('y2', chartRect.y + chartRect.h)
       .attr('stroke', ev.kind === 'alarm' ? '#e4572e' : 'rgba(232,228,216,0.25)')
       .attr('stroke-width', ev.kind === 'alarm' ? 1.4 : 1);
-    // alternate label rows so neighbors at 02:29/02:33/03:05 don't collide
+    // alternate label rows so neighbors at 02:29/02:33/03:05 don't collide;
+    // the regulation-end label additionally hangs right of its line
+    const rightHang = ev.utc === '03:05';
     g.append('text').attr('class', 'callout')
-      .attr('x', x).attr('y', chartRect.y - 10 - (idx % 2) * 15)
-      .attr('text-anchor', 'middle').attr('font-size', 10.5)
+      .attr('x', x + (rightHang ? 5 : 0)).attr('y', chartRect.y - 10 - (idx % 2) * 15)
+      .attr('text-anchor', rightHang ? 'start' : 'middle').attr('font-size', 10.5)
       .attr('fill', ev.kind === 'alarm' ? '#e4572e' : '#98a092')
       .text(ev.label.split('(')[0].trim());
   });
@@ -198,10 +297,11 @@ function ensureChart() {
 }
 
 let chartShown = false;
-function showChart(endUtc) {
+function showChart(endUtc, model) {
   ensureChart();
   chartShown = true;
   chartG.style('opacity', 1);
+  modelG.style('opacity', model ? 1 : 0);
   clipRect.style('width', Math.max(xScale(utcMin(endUtc)) - chartRect.x, 0) + 'px');
   chartG.selectAll('.ev').each(function () {
     const past = utcMin(this.dataset.utc) <= utcMin(endUtc);
@@ -326,11 +426,59 @@ const BEATS = {
           .attr('fill', 'rgba(242,160,61,0.7)');
         callout(g, mid + 28, y + rowH * 0.45, fmt(d[0]), { mono: true, size: 11.5, fill: '#e8e4d8' });
       });
-      callout(g, mid - 40, by - 14, 'BUYERS WAITING', { anchor: 'end', size: 10.5, fill: '#7bc8e8' });
-      callout(g, mid + 40, by - 14, 'SELLERS WAITING', { size: 10.5, fill: '#f2a03d' });
-      callout(g, mid, by + 6 * rowH + 20, `${(ORDERBOOK.yesAsks[0][1] / 1e6).toFixed(1)}M contracts resting at 55¢ — the wall the price must eat through`, { anchor: 'middle', size: 12 });
+      callout(g, mid - 40, by - 14, 'BUYERS WAITING (BIDS)', { anchor: 'end', size: 10.5, fill: '#7bc8e8' });
+      callout(g, mid + 40, by - 14, 'SELLERS WAITING (ASKS)', { size: 10.5, fill: '#f2a03d' });
+      callout(g, mid, by + 6 * rowH + 20, `${(ORDERBOOK.yesAsks[0][1] / 1e6).toFixed(1)}M contracts resting at 55¢: the wall the price must eat through`, { anchor: 'middle', size: 12 });
       callout(g, mid, by - 34, ORDERBOOK.question, { anchor: 'middle', size: 13, fill: '#e8e4d8' });
       stamp(g, bx, by + 6 * rowH + 34, 'real', `REAL · PUBLIC API · ${ORDERBOOK.pulledUtc}`);
+    },
+  },
+
+  prints: {
+    hud: { clock: 'JUL 13 2026', beat: 'The public tape', price: `every print · <b>55¢</b>` },
+    state: () => worldGrid(N, gridRectSquare(), { yesCount: 2600, dimNo: true }),
+    chart: false,
+    anno: g => {
+      const r = gridRectSquare();
+      g.append('rect').attr('x', r.x).attr('y', r.y).attr('width', r.w).attr('height', r.h)
+        .attr('fill', 'rgba(16,25,19,0.78)');
+      const px = r.x + r.w * 0.5, py = r.y + r.h * 0.10;
+      callout(g, px, py, 'THE TAPE · MOST RECENT PRINTS', { anchor: 'middle', size: 11.5, fill: '#e8e4d8' });
+      const rows = TAPE.prints.slice(0, 10);
+      rows.forEach((p, i) => {
+        const y = py + 26 + i * 19;
+        callout(g, px - 160, y, p.t.replace(' UTC', ''), { mono: true, size: 11.5 });
+        callout(g, px - 55, y, fmt(p.price), { mono: true, size: 11.5, fill: '#e8e4d8' });
+        callout(g, px + 45, y, String(p.count), { mono: true, size: 11.5, anchor: 'end' });
+        callout(g, px + 62, y, 'buyer crossed ↑', { size: 10.5, fill: '#7bc8e8' });
+      });
+      const yb = py + 26 + rows.length * 19 + 18;
+      callout(g, px, yb, 'thirty straight prints, all buyers accepting the 55¢ ask', { anchor: 'middle', size: 12, fill: '#e8e4d8' });
+      callout(g, px, yb + 18, 'the price is the last handshake, and buyers keep reaching', { anchor: 'middle', size: 11 });
+      stamp(g, px - 120, yb + 30, 'real', `REAL · /markets/trades · ${TAPE.pulledUtc}`);
+    },
+  },
+
+  dice: {
+    hud: { clock: "0' · 0–0", beat: 'Two scoring processes', price: `λ <b>1.8</b> · λ <b>0.9</b>` },
+    state: () => marginalBars(N, gridRectSquare(), { probsA: MARGA, probsB: MARGB }),
+    chart: false,
+    anno: g => {
+      const r = gridRectSquare();
+      const bins = 5, binW = r.w / bins;
+      const rowH = r.h * 0.40;
+      const baseA = r.y + rowH, baseB = r.y + r.h;
+      for (let b = 0; b < bins; b++) {
+        const cx = r.x + (b + 0.5) * binW;
+        const lab = b === 4 ? '4+' : String(b);
+        callout(g, cx, baseA + 16, lab, { anchor: 'middle', mono: true, size: 11 });
+        callout(g, cx, baseA + 30, Math.round(MARGA[b] * 100) + '%', { anchor: 'middle', mono: true, size: 10, fill: '#98a092' });
+        callout(g, cx, baseB + 16, lab, { anchor: 'middle', mono: true, size: 11 });
+        callout(g, cx, baseB + 30, Math.round(MARGB[b] * 100) + '%', { anchor: 'middle', mono: true, size: 10, fill: '#7bc8e8' });
+      }
+      callout(g, r.x, baseA - rowH * 0.82, ['ARGENTINA', 'goals · λ ≈ 1.8'], { size: 11, fill: '#e8e4d8' });
+      callout(g, r.x, baseB - rowH * 0.82, ['SWITZERLAND', 'goals · λ ≈ 0.9'], { size: 11, fill: '#7bc8e8' });
+      stamp(g, r.x, r.y - 24, 'model', 'MODEL · POISSON, EACH TEAM SEPARATELY');
     },
   },
 
@@ -349,35 +497,40 @@ const BEATS = {
       g.append('text').attr('class', 'callout')
         .attr('transform', `translate(${r.x - 38},${r.y + r.h / 2}) rotate(-90)`)
         .attr('text-anchor', 'middle').attr('font-size', 10.5).text('ARGENTINA FINAL GOALS →');
-      // direct labels on the two most meaningful cells
-      callout(g, r.x + 1.5 * cw, r.y + r.h - 1.72 * ch, ['1–1 · likeliest single score', '→ extra time, priced in slices'], { anchor: 'middle', size: 11.5 });
+      // direct labels: the modal cell (1–0 Argentina) and the draw diagonal
+      callout(g, r.x + 0.5 * cw, r.y + r.h - 1.78 * ch, ['1–0 · likeliest single', 'score, ≈12%'], { anchor: 'middle', size: 11.5 });
+      callout(g, r.x + 1.5 * cw, r.y + r.h - 1.72 * ch, ['1–1 · a draw cell: partly lit,', 'extra time decides it'], { anchor: 'middle', size: 11.5 });
       callout(g, r.x + 2.5 * cw, r.y + r.h - 0.5 * ch, 'lit = Switzerland advances', { anchor: 'middle', size: 11.5, fill: '#7bc8e8' });
+      callout(g, r.x + r.w - 6, r.y - 24, 'cell mass = row share × column share', { anchor: 'end', size: 10.5 });
       stamp(g, r.x, r.y - 24, 'model', 'MODEL · POISSON, CALIBRATED TO THE REAL 26¢');
     },
   },
 
   goal: {
-    hud: { clock: "10' · 1–0", beat: 'The favorite scores', price: `<b>12¢</b>` },
+    hud: { clock: "10' · 1–0", beat: 'The favorite scores', price: `<b>12¢</b> · model 10¢` },
     state: () => priceColumn(N, region, { price: priceAt('01:15') }),
     chart: '01:26',
     anno: g => {
       const c = columnGeom();
-      callout(g, c.x0 - 10, c.yFor(0.12) - 8, '12¢', { anchor: 'end', mono: true, size: 15, fill: '#e8e4d8' });
+      callout(g, c.x0 - 10, c.yFor(0.12) - 8, 'market 12¢ · model ≈10¢', { anchor: 'end', mono: true, size: 13.5, fill: '#e8e4d8' });
       callout(g, c.x0 - 10, c.yFor(0.12) + 10, 'the same 10,000 endings, re-counted', { anchor: 'end', size: 11.5 });
     },
   },
 
   equalizer: {
-    hud: { clock: "67' · 1–1", beat: 'The market floods', price: `<b>32¢</b>` },
+    hud: { clock: "67' · 1–1", beat: 'The market floods', price: `<b>10–35¢</b> in 1 min` },
     state: () => priceColumn(N, region, { price: 0.32 }),
     chart: '02:32',
     anno: g => {
-      callout(g, chartRect.x + chartRect.w * 0.79, chartRect.y + chartRect.h * 0.32,
-        ['1.28M contracts in one minute', '≈ 22× the pre-kickoff rate'], { anchor: 'end', size: 12 });
+      callout(g, chartRect.x + chartRect.w * 0.78, chartRect.y + chartRect.h * 0.18,
+        ['02:29: traded 10¢ to 35¢', 'inside one minute'], { anchor: 'end', size: 12, fill: '#e8e4d8' });
+      callout(g, chartRect.x + chartRect.w * 0.78, chartRect.y + chartRect.h * 0.52,
+        ['02:30: 1.28M contracts,', '≈ 22× the pre-kickoff rate'], { anchor: 'end', size: 12 });
       const x = xScale ? xScale(utcMin('02:30')) : 0;
       g.append('line').attr('x1', x).attr('x2', x)
-        .attr('y1', chartRect.y + chartRect.h * 0.36).attr('y2', chartRect.y + chartRect.h * 0.72)
+        .attr('y1', chartRect.y + chartRect.h * 0.22).attr('y2', chartRect.y + chartRect.h * 0.7)
         .attr('stroke', 'rgba(232,228,216,0.5)').attr('stroke-width', 1);
+      callout(g, chartRect.x + 8, chartRect.y - 26, 'pale band = each minute’s full traded range (REAL)', { size: 10.5 });
     },
   },
 
@@ -392,19 +545,35 @@ const BEATS = {
     },
   },
 
+  twoclocks: {
+    hud: { clock: "75' · 1–1 · 10 MEN", beat: 'Two readings', price: `market <b>17¢</b> · model 12¢` },
+    state: () => priceColumn(N, region, { price: 0.17 }),
+    chart: '02:47', model: true,
+    anno: g => {
+      if (!xScale) return;
+      const x = xScale(utcMin('02:10'));
+      callout(g, x, yScale(0.40), ['dashed: the clock reading, made precise.', 'Model fair value from score, cards, time only'],
+        { anchor: 'middle', size: 11, fill: '#7bc8e8' });
+      const c = columnGeom();
+      callout(g, c.x0 - 10, c.yFor(0.17) - 8, 'market 17¢ · model ≈12¢', { anchor: 'end', mono: true, size: 13, fill: '#e8e4d8' });
+      callout(g, c.x0 - 10, c.yFor(0.17) + 10, 'an interpretation, not a census of traders', { anchor: 'end', size: 11 });
+    },
+  },
+
   climb: {
-    hud: { clock: "90' · 1–1", beat: 'Theta decay, live', price: `<b>26¢</b>` },
+    hud: { clock: "90' · 1–1", beat: 'Time decay, live', price: `<b>26¢</b> · model 17¢` },
     state: () => priceColumn(N, region, { price: 0.26 }),
-    chart: '03:06',
+    chart: '03:06', model: true,
     anno: g => {
       const c = columnGeom();
       callout(g, c.x0 - 10, c.yFor(0.26) - 8, '16 → 19 → 22 → 25 → 26¢', { anchor: 'end', mono: true, size: 13, fill: '#e8e4d8' });
       callout(g, c.x0 - 10, c.yFor(0.26) + 10, 'every scoreless minute is worth cents', { anchor: 'end', size: 11.5 });
-      // the third 26¢, annotated on the chart (real, regulation market)
       if (xScale) {
+        const xm = xScale(utcMin('02:54'));
+        callout(g, xm, yScale(0.40), ['the amber wedge: the climb', 'the clock alone can’t explain'], { anchor: 'middle', size: 11, fill: '#f2a03d' });
         const x = xScale(utcMin('02:55'));
         callout(g, x, chartRect.y + chartRect.h + 52,
-          ['02:55 UTC: Argentina’s regulation-time contract also read 26¢ —', 'the same digits, a favorite racing the clock. (REAL)'],
+          ['02:55 UTC: Argentina’s regulation-time contract also read 26¢.', 'The same digits, a favorite racing the clock. (REAL)'],
           { anchor: 'middle', size: 10.5 });
       }
     },
@@ -426,8 +595,8 @@ const BEATS = {
           .attr('width', sc * 0.7).attr('height', sc * 0.7)
           .attr('fill', 'rgba(123,200,232,0.28)');
       });
-      callout(g, gx, gy + height * sc + 16, '9:00 PM — capability', { size: 10.5, fill: '#7bc8e8' });
-      callout(g, r.x + r.w / 2, r.y + r.h + 30, '11:05 PM — the same number, rebuilt from different worlds', { anchor: 'middle', size: 12.5 });
+      callout(g, gx, gy + height * sc + 16, '9:00 PM · capability', { size: 10.5, fill: '#7bc8e8' });
+      callout(g, r.x + r.w / 2, r.y + r.h + 30, '11:05 PM · the same number, rebuilt from different worlds', { anchor: 'middle', size: 12.5 });
       stamp(g, r.x + r.w / 2 - 90, r.y + r.h + 42, 'real', 'REAL · 26¢ AT 03:05–03:06 UTC');
     },
   },
@@ -449,7 +618,7 @@ const BEATS = {
       g.append('path')
         .attr('d', `M ${c.x1 + 8} ${yMkt} h 10 V ${yFair} h -10`)
         .attr('fill', 'none').attr('stroke', '#f2a03d').attr('stroke-width', 1.4);
-      callout(g, c.x1 + 24, (yMkt + yFair) / 2 + 4, ['9¢ — feeling,', 'or knowledge', 'the model lacks'], { size: 12, fill: '#f2a03d' });
+      callout(g, c.x1 + 24, (yMkt + yFair) / 2 + 4, ['9¢: feeling,', 'or knowledge', 'the model lacks'], { size: 12, fill: '#f2a03d' });
       callout(g, c.x1 + 24, (yMkt + yFair) / 2 + 58, 'fees ≤ 1.75¢ of it', { size: 10.5 });
       stamp(g, c.x0 - 70, yFair + 58, 'model', 'MODEL · SEE METHOD NOTES');
       stamp(g, c.x0 - 70, yMkt - 22, 'real', 'REAL · KALSHI');
@@ -459,11 +628,11 @@ const BEATS = {
   resolution: {
     hud: { clock: "112' · 2–1", beat: 'Resolution', price: `<b>2¢</b> → $0` },
     state: () => priceColumn(N, region, { price: 0.01 }),
-    chart: '03:45',
+    chart: '03:45', model: true,
     anno: g => {
       const c = columnGeom();
       callout(g, c.x0 - 10, c.yFor(0.05) - 12, 'settles $0', { anchor: 'end', mono: true, size: 14 });
-      callout(g, c.x0 - 10, c.yFor(0.05) + 6, ['a 26% world simply didn’t arrive —', 'that is what 26% means'], { anchor: 'end', size: 11.5 });
+      callout(g, c.x0 - 10, c.yFor(0.05) + 6, ['a 26% world simply didn’t arrive;', 'that is what 26% means'], { anchor: 'end', size: 11.5 });
     },
   },
 
@@ -501,7 +670,7 @@ const BEATS = {
         callout(g, cx(k), yFor(p) - 26, d, { anchor: 'middle', size: 11.5 });
         callout(g, cx(k), yFor(p) - 10, l, { anchor: 'middle', mono: true, size: 13, fill: '#e8e4d8' });
       });
-      callout(g, cx(1), yFor(0.84) - 58, ['Adams withdraws — the “threat”', 'lands, and the price goes UP'], { anchor: 'middle', size: 11 });
+      callout(g, cx(1), yFor(0.84) - 58, ['Adams withdraws; the “threat”', 'lands, and the price goes UP'], { anchor: 'middle', size: 11 });
       callout(g, cx(2), yFor(0.94) - 44, 'no news; just clock', { anchor: 'middle', size: 11 });
       stamp(g, r.x, r.y + r.h + 18, 'real', 'REAL · ARCHIVED KALSHI PAGES + DATED PRESS · 2025');
     },
@@ -514,7 +683,7 @@ const BEATS = {
     anno: g => {
       const y = region.y + region.h * 0.78;
       callout(g, region.x + region.w * 0.23, y, 'capability', { anchor: 'middle', size: 12.5, fill: '#7bc8e8' });
-      callout(g, region.x + region.w * 0.77, y, 'survival — with its band of feeling', { anchor: 'middle', size: 12.5, fill: '#f2a03d' });
+      callout(g, region.x + region.w * 0.77, y, 'survival · with its band of feeling', { anchor: 'middle', size: 12.5, fill: '#f2a03d' });
       callout(g, region.x + region.w / 2, y + 34, 'the same 2,600 units, twice', { anchor: 'middle', size: 11.5 });
     },
   },
@@ -541,7 +710,7 @@ function activate(name) {
   const b = BEATS[name];
   setHud(b.hud);
   if (engine) engine.transitionTo(b.state(), { duration: DUR });
-  if (b.chart) showChart(b.chart); else hideChart();
+  if (b.chart) showChart(b.chart, b.model); else hideChart();
   setAnno(b.anno);
 }
 
@@ -550,14 +719,14 @@ function repaint() {
   computeRegions();
   if (engine) engine.resize(W, H);
   svg.attr('viewBox', `0 0 ${W} ${H}`).attr('width', W).attr('height', H);
-  if (chartG) { chartG.remove(); chartG = null; svg.selectAll('defs').remove(); }
+  if (chartG) { chartG.remove(); chartG = null; modelG = null; svg.selectAll('defs').remove(); }
   const name = currentBeat;
   currentBeat = null;
   if (name) {
     const b = BEATS[name];
     setHud(b.hud);
     if (engine) engine.setState(b.state());
-    if (b.chart) { ensureChart(); showChart(b.chart); } else hideChart();
+    if (b.chart) { ensureChart(); showChart(b.chart, b.model); } else hideChart();
     setAnno(b.anno);
     currentBeat = name;
   }

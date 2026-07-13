@@ -110,6 +110,33 @@ export function advanceProbFromState(state) {
 }
 
 /**
+ * P(team B advances) evaluated DURING extra time. etMinute in [0, 30];
+ * scoreA/scoreB are the aggregate score; a red card persists; level at the
+ * end of ET goes to penalties (pens, default 0.5 — stated assumption).
+ */
+export function advanceProbET(state) {
+  const frac = Math.max(30 - state.etMinute, 0) / 30;
+  let eA = (state.lamA / 3) * frac;
+  let eB = (state.lamB / 3) * frac;
+  if (state.redCard === 'A') { eA *= state.redShort; eB *= state.redFull; }
+  else if (state.redCard === 'B') { eB *= state.redShort; eA *= state.redFull; }
+  const kMax = 8;
+  const g = scoreGrid(eA, eB, kMax);
+  const pens = state.pens !== undefined ? state.pens : 0.5;
+  let adv = 0, tot = 0;
+  for (let i = 0; i <= kMax; i++) {
+    for (let j = 0; j <= kMax; j++) {
+      const p = g[i][j];
+      tot += p;
+      const fA = state.scoreA + i, fB = state.scoreB + j;
+      if (fB > fA) adv += p;
+      else if (fB === fA) adv += p * pens;
+    }
+  }
+  return adv / tot;
+}
+
+/**
  * Calibrate the lambda split so that P(underdog B advances) matches an
  * observed kickoff price, holding the total-goals assumption fixed:
  * lamA + lamB = totalGoals. Reverse-engineers "what strength gap does this
