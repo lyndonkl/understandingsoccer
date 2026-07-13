@@ -173,15 +173,16 @@ function ensureChart() {
 
   // event markers, revealed as time passes
   const evG = chartG.append('g');
-  EVENTS.forEach(ev => {
+  EVENTS.forEach((ev, idx) => {
     const g = evG.append('g').attr('class', 'ev').attr('data-utc', ev.utc).style('opacity', 0);
     const x = xScale(utcMin(ev.utc));
     g.append('line').attr('x1', x).attr('x2', x)
       .attr('y1', chartRect.y).attr('y2', chartRect.y + chartRect.h)
       .attr('stroke', ev.kind === 'alarm' ? '#e4572e' : 'rgba(232,228,216,0.25)')
       .attr('stroke-width', ev.kind === 'alarm' ? 1.4 : 1);
+    // alternate label rows so neighbors at 02:29/02:33/03:05 don't collide
     g.append('text').attr('class', 'callout')
-      .attr('x', x).attr('y', chartRect.y - 8)
+      .attr('x', x).attr('y', chartRect.y - 10 - (idx % 2) * 15)
       .attr('text-anchor', 'middle').attr('font-size', 10.5)
       .attr('fill', ev.kind === 'alarm' ? '#e4572e' : '#98a092')
       .text(ev.label.split('(')[0].trim());
@@ -200,30 +201,35 @@ let chartShown = false;
 function showChart(endUtc) {
   ensureChart();
   chartShown = true;
-  chartG.transition('beat').duration(DUR / 2).style('opacity', 1);
-  clipRect.transition('beat').duration(DUR)
-    .attr('width', Math.max(xScale(utcMin(endUtc)) - chartRect.x, 0));
+  chartG.style('opacity', 1);
+  clipRect.style('width', Math.max(xScale(utcMin(endUtc)) - chartRect.x, 0) + 'px');
   chartG.selectAll('.ev').each(function () {
     const past = utcMin(this.dataset.utc) <= utcMin(endUtc);
-    d3.select(this).transition('beat').duration(DUR / 2).style('opacity', past ? 1 : 0);
+    this.style.opacity = past ? 1 : 0;
   });
 }
 function hideChart() {
   if (!chartG || !chartShown) return;
   chartShown = false;
-  chartG.transition('beat').duration(400).style('opacity', 0);
+  chartG.style('opacity', 0);
 }
 
 /* ---------------------------------------------------------------- */
 /* Per-beat annotation layer                                         */
 let annoLayer = null;
 function setAnno(drawFn) {
-  if (annoLayer) {
-    annoLayer.transition('beat').duration(320).style('opacity', 0).remove();
-  }
+  // Sweep: drop layers that already finished fading; fade the rest out.
+  svg.selectAll(':scope > g.layer').each(function () {
+    if (this.style.opacity === '0') this.remove();
+    else this.style.opacity = 0;
+  });
   annoLayer = svg.append('g').attr('class', 'layer').style('opacity', 0);
   if (drawFn) drawFn(annoLayer);
-  annoLayer.transition('beat').duration(DUR ? 500 : 0).delay(DUR ? 250 : 0).style('opacity', 1);
+  // Synchronous style flush so opacity:0 is the committed start value, then
+  // flip to 1 — kicks the CSS transition without depending on rAF timing.
+  const el = annoLayer.node();
+  void el.getBoundingClientRect();
+  el.style.opacity = 1;
 }
 
 function stamp(g, x, y, kind, text) {
@@ -250,10 +256,17 @@ function callout(g, x, y, lines, opts = {}) {
 }
 
 /* Column geometry shared with priceColumn(colW=0.24) */
-function columnGeom() {
+function columnGeom(rect) {
+  const r = rect || region;
   const colW = 0.24;
-  const x0 = region.x + region.w * (1 - colW);
-  return { x0, x1: region.x + region.w, yFor: p => region.y + region.h * (1 - p) };
+  const x0 = r.x + r.w * (1 - colW);
+  return { x0, x1: r.x + r.w, yFor: p => r.y + r.h * (1 - p) };
+}
+
+/* The spread beat needs breathing room to the right of the column for the
+ * gap bracket and its labels, so it uses a narrower rect. */
+function spreadRect() {
+  return { x: region.x, y: region.y, w: region.w * 0.76, h: region.h };
 }
 
 /* ---------------------------------------------------------------- */
@@ -421,10 +434,10 @@ const BEATS = {
 
   spread: {
     hud: { clock: "FT · 1–1", beat: 'The gap', price: `market <b>26¢</b> · <span class="hot">model 17¢</span>` },
-    state: () => priceColumn(N, region, { price: 0.26, fair: FAIR90 }),
+    state: () => priceColumn(N, spreadRect(), { price: 0.26, fair: FAIR90 }),
     chart: false,
     anno: g => {
-      const c = columnGeom();
+      const c = columnGeom(spreadRect());
       const yFair = c.yFor(FAIR90), yMkt = c.yFor(0.26);
       g.append('line').attr('x1', c.x0 - 64).attr('x2', c.x1)
         .attr('y1', yFair).attr('y2', yFair)
@@ -438,7 +451,7 @@ const BEATS = {
         .attr('fill', 'none').attr('stroke', '#f2a03d').attr('stroke-width', 1.4);
       callout(g, c.x1 + 24, (yMkt + yFair) / 2 + 4, ['9¢ — feeling,', 'or knowledge', 'the model lacks'], { size: 12, fill: '#f2a03d' });
       callout(g, c.x1 + 24, (yMkt + yFair) / 2 + 58, 'fees ≤ 1.75¢ of it', { size: 10.5 });
-      stamp(g, c.x0 - 70, yFair + 44, 'model', 'MODEL · SEE METHOD NOTES');
+      stamp(g, c.x0 - 70, yFair + 58, 'model', 'MODEL · SEE METHOD NOTES');
       stamp(g, c.x0 - 70, yMkt - 22, 'real', 'REAL · KALSHI');
     },
   },
@@ -524,6 +537,7 @@ let currentBeat = null;
 function activate(name) {
   if (name === currentBeat || !BEATS[name]) return;
   currentBeat = name;
+  console.log('[26c] beat', name);
   const b = BEATS[name];
   setHud(b.hud);
   if (engine) engine.transitionTo(b.state(), { duration: DUR });
@@ -560,12 +574,28 @@ if (engine) engine.setState(BEATS.hero.state());
 setHud(BEATS.hero.hud);
 currentBeat = 'hero';
 
-const io = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) activate(e.target.dataset.beat);
-  });
-}, { rootMargin: '-42% 0px -42% 0px', threshold: 0 });
-document.querySelectorAll('.card[data-beat]').forEach(el => io.observe(el));
+/* Beat activation: a passive scroll listener + rAF, not IntersectionObserver.
+ * IO notifications ride the main-thread rendering steps, and on a static page
+ * Chrome scrolls on the compositor — observations can arrive seconds late.
+ * The rule is explicit and direction-symmetric: the active beat is the LAST
+ * card whose top has crossed 60% of the viewport height. */
+const cardEls = Array.from(document.querySelectorAll('.card[data-beat]'));
+function computeActiveBeat() {
+  const marker = window.innerHeight * 0.60;
+  let active = 'hero';
+  for (const el of cardEls) {
+    if (el.getBoundingClientRect().top < marker) active = el.dataset.beat;
+    else break;
+  }
+  activate(active);
+}
+let scrollTick = false;
+window.addEventListener('scroll', () => {
+  if (scrollTick) return;
+  scrollTick = true;
+  requestAnimationFrame(() => { scrollTick = false; computeActiveBeat(); });
+}, { passive: true });
+computeActiveBeat();
 
 let resizeT = null;
 window.addEventListener('resize', () => {
@@ -578,3 +608,10 @@ console.log('[26c] model calibration', {
   lamARG: +CAL.lamA.toFixed(3), lamSUI: +CAL.lamB.toFixed(3),
   kickoffAdvance: +KICK.pAdvance.toFixed(4), fair90: +FAIR90.toFixed(4),
 });
+
+// Deterministic hook for tests and debugging (not used by the page itself)
+window.__kalshi = {
+  activate,
+  beats: Object.keys(BEATS),
+  get current() { return currentBeat; },
+};

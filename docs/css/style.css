@@ -261,6 +261,13 @@ a:hover { text-decoration-color: var(--model); }
 }
 
 /* ---------- SVG annotation layer ---------- */
+/* Fades and the chart reveal are CSS transitions, not d3 timers: they run on
+ * the compositor, survive hidden-tab suspension by snapping to their end
+ * state, and natively retarget from current value when interrupted. */
+.anno .layer, .anno .chart-layer { transition: opacity 0.45s ease; }
+.anno .ev { transition: opacity 0.4s ease; }
+#reveal rect { transition: width 0.75s cubic-bezier(0.215, 0.61, 0.355, 1); }
+
 .anno text {
   font-family: var(--grot);
   font-stretch: 78%;
@@ -331,4 +338,5 @@ body.no-webgl .nogl-note { display: block; }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
+  .anno .layer, .anno .chart-layer, .anno .ev, #reveal rect { transition: none; }
 }

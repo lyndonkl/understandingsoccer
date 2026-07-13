@@ -20,11 +20,13 @@ export const PALETTE = {
 };
 
 function hash01(i, salt) {
-  let h = (i * 2654435761 + salt * 40503) >>> 0;
-  h ^= h >> 15; h = (h * 2246822519) >>> 0;
-  h ^= h >> 13; h = (h * 3266489917) >>> 0;
-  h ^= h >> 16;
-  return (h >>> 8) / 16777216;
+  // Math.imul keeps the multiplies exact in 32 bits; a plain * overflows
+  // double precision and silently biases the hash.
+  let h = (Math.imul(i, 2654435761) + Math.imul(salt, 40503)) | 0;
+  h ^= h >>> 15; h = Math.imul(h, 2246822519);
+  h ^= h >>> 13; h = Math.imul(h, 3266489917);
+  h ^= h >>> 16;
+  return ((h >>> 8) & 0xffffff) / 16777216;
 }
 
 export function blankState(N) {
