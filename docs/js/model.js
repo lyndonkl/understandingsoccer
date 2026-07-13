@@ -82,22 +82,50 @@ export function outcomeFromState(state) {
 }
 
 /**
- * Calibrate lamB (underdog) so that P(B wins) matches an observed price,
- * holding the total-goals assumption fixed: lamA + lamB = totalGoals.
- * Used to reverse-engineer "what strength gap does this kickoff price imply?"
- * — the answer is a model output, labeled as such.
+ * P(team B ADVANCES) from an in-regulation state, for a knockout tie:
+ * win in the remaining 90' + (drawn at 90') x (win ET + draw ET x P(win pens)).
+ * Extra time runs at 1/3 of full-match rates (30 of 90 minutes); a red card
+ * persists into ET; penalties default to 0.5 (stated model assumption).
+ */
+export function advanceProbFromState(state) {
+  const reg = outcomeFromState(state);
+  let eA = state.lamA / 3, eB = state.lamB / 3;
+  if (state.redCard === 'A') { eA *= state.redShort; eB *= state.redFull; }
+  else if (state.redCard === 'B') { eB *= state.redShort; eA *= state.redFull; }
+  const kMax = 8;
+  const g = scoreGrid(eA, eB, kMax);
+  let wA = 0, wB = 0, dr = 0;
+  for (let i = 0; i <= kMax; i++) {
+    for (let j = 0; j <= kMax; j++) {
+      if (i > j) wA += g[i][j];
+      else if (j > i) wB += g[i][j];
+      else dr += g[i][j];
+    }
+  }
+  const s = wA + wB + dr;
+  const pens = state.pens !== undefined ? state.pens : 0.5;
+  const et = { winA: wA / s, winB: wB / s, draw: dr / s };
+  const pEt = et.winB + et.draw * pens;
+  return { pAdvance: reg.winB + reg.draw * pEt, reg, et, pEt };
+}
+
+/**
+ * Calibrate the lambda split so that P(underdog B advances) matches an
+ * observed kickoff price, holding the total-goals assumption fixed:
+ * lamA + lamB = totalGoals. Reverse-engineers "what strength gap does this
+ * price imply?" — the answer is a model output, labeled as such.
  */
 export function solveLambdasForPrice(priceB, totalGoals, opts = {}) {
   let lo = 0.05, hi = totalGoals / 2; // underdog: lamB <= half the total
   for (let iter = 0; iter < 60; iter++) {
     const mid = (lo + hi) / 2;
-    const { winB } = outcomeFromState({
+    const { pAdvance } = advanceProbFromState({
       lamA: totalGoals - mid, lamB: mid,
       minute: 0, scoreA: 0, scoreB: 0, redCard: null,
       redShort: 1, redFull: 1,
       ...opts,
     });
-    if (winB < priceB) lo = mid; else hi = mid;
+    if (pAdvance < priceB) lo = mid; else hi = mid;
   }
   const lamB = (lo + hi) / 2;
   return { lamA: totalGoals - lamB, lamB };
