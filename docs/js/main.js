@@ -216,7 +216,9 @@ function ensureChart() {
   chartG.append('g').attr('clip-path', 'url(#reveal)')
     .append('path').datum(ADVANCE)
     .attr('d', env)
-    .attr('fill', 'rgba(232,228,216,0.16)');
+    .attr('fill', 'rgba(232,228,216,0.28)')
+    .attr('stroke', 'rgba(232,228,216,0.35)')
+    .attr('stroke-width', 0.7);
 
   // model fair-value overlay: dashed line + gap bands vs the traded price.
   // Revealed only from the beats that introduce it (b.model flag).
@@ -246,6 +248,15 @@ function ensureChart() {
   ms.append('text').attr('class', 'stamp model')
     .attr('x', chartRect.x + 267).attr('y', chartRect.y + chartRect.h + 37.5)
     .text('MODEL · FAIR VALUE, DASHED · MINUTE MAP INFERRED');
+  // direct labels on the two lines, placed where they separate (post red card)
+  ms.append('text').attr('class', 'callout mono')
+    .attr('x', xScale(utcMin('02:40'))).attr('y', yScale(0.20) - 6)
+    .attr('text-anchor', 'middle').attr('font-size', 10.5).attr('fill', '#e8e4d8')
+    .text('market · traded Kalshi price');
+  ms.append('text').attr('class', 'callout mono')
+    .attr('x', xScale(utcMin('02:44'))).attr('y', yScale(0.115) + 24)
+    .attr('text-anchor', 'middle').attr('font-size', 10.5).attr('fill', '#7bc8e8')
+    .text('model fair value · the dice, re-rolled');
 
   // the real price line
   const line = d3.line()
@@ -498,11 +509,26 @@ const BEATS = {
       g.append('text').attr('class', 'callout')
         .attr('transform', `translate(${r.x - 38},${r.y + r.h / 2}) rotate(-90)`)
         .attr('text-anchor', 'middle').attr('font-size', 10.5).text('ARGENTINA FINAL GOALS →');
-      // direct labels: the modal cell (1–0 Argentina) and the draw diagonal
-      callout(g, r.x + 0.5 * cw, r.y + r.h - 1.78 * ch, ['1–0 · likeliest single', 'score, ≈12%'], { anchor: 'middle', size: 11.5 });
-      callout(g, r.x + 1.5 * cw, r.y + r.h - 1.72 * ch, ['1–1 · a draw cell: partly lit,', 'extra time decides it'], { anchor: 'middle', size: 11.5 });
-      callout(g, r.x + 2.5 * cw, r.y + r.h - 0.5 * ch, 'lit = Switzerland advances', { anchor: 'middle', size: 11.5, fill: '#7bc8e8' });
-      callout(g, r.x + r.w - 6, r.y - 24, 'cell mass = row share × column share', { anchor: 'end', size: 10.5 });
+      // direct percentage labels on key cells: likelihood = dot count, and
+      // the number makes the count readable at a glance
+      const cellProb = (ai, sj) => {
+        const c = KCELLS.cells.find(x => x.i === ai && x.j === sj);
+        return c ? Math.round(c.prob * 100) : 0;
+      };
+      [[0, 0], [1, 0], [0, 1], [1, 1], [2, 0], [2, 1]].forEach(([ai, sj]) => {
+        const p = cellProb(ai, sj);
+        const hot = ai === 1 && sj === 0; // the modal cell
+        callout(g, r.x + sj * cw + 7, r.y + r.h - (ai + 1) * ch + 15,
+          p + '%' + (hot ? ' · likeliest' : ''),
+          { mono: true, size: hot ? 11.5 : 10.5, fill: hot ? '#e8e4d8' : '#98a092' });
+      });
+      // one-line reading key + the lit-mass total
+      callout(g, r.x + r.w / 2, r.y + r.h + 56,
+        'each cell = one final score · its chance = its dot count (any cell can be likely) · lit blue = endings where Switzerland advances',
+        { anchor: 'middle', size: 11 });
+      callout(g, r.x + r.w / 2, r.y + r.h + 76,
+        '2,600 of 10,000 dots lit = the 26¢ price', { anchor: 'middle', mono: true, size: 12.5, fill: '#7bc8e8' });
+      callout(g, r.x + r.w - 6, r.y - 24, 'cell dots = row share × column share × 10,000', { anchor: 'end', size: 10.5 });
       stamp(g, r.x, r.y - 24, 'model', 'MODEL · POISSON, CALIBRATED TO THE REAL 26¢');
     },
   },
@@ -524,15 +550,21 @@ const BEATS = {
     state: () => priceColumn(N, region, { price: 0.32 }),
     chart: '02:32',
     anno: g => {
-      callout(g, chartRect.x + chartRect.w * 0.78, chartRect.y + chartRect.h * 0.18,
-        ['02:29: traded 10¢ to 35¢', 'inside one minute'], { anchor: 'end', size: 12, fill: '#e8e4d8' });
-      callout(g, chartRect.x + chartRect.w * 0.78, chartRect.y + chartRect.h * 0.52,
+      if (!xScale) return;
+      const xEq = xScale(utcMin('02:29'));
+      const labelX = chartRect.x + chartRect.w * 0.72;
+      const labelY = chartRect.y + chartRect.h * 0.14;
+      callout(g, labelX, labelY, ['02:29: prints from 10¢ to 35¢', 'inside one minute'], { anchor: 'end', size: 12, fill: '#e8e4d8' });
+      // leader line from the label down to the band where it blows open
+      g.append('line')
+        .attr('x1', labelX - 58).attr('y1', labelY + 10)
+        .attr('x2', xEq + 2).attr('y2', yScale(0.33))
+        .attr('stroke', 'rgba(232,228,216,0.85)').attr('stroke-width', 1.3);
+      g.append('circle').attr('cx', xEq + 2).attr('cy', yScale(0.33)).attr('r', 3)
+        .attr('fill', '#e8e4d8');
+      callout(g, labelX, chartRect.y + chartRect.h * 0.52,
         ['02:30: 1.28M contracts,', '≈ 22× the pre-kickoff rate'], { anchor: 'end', size: 12 });
-      const x = xScale ? xScale(utcMin('02:30')) : 0;
-      g.append('line').attr('x1', x).attr('x2', x)
-        .attr('y1', chartRect.y + chartRect.h * 0.22).attr('y2', chartRect.y + chartRect.h * 0.7)
-        .attr('stroke', 'rgba(232,228,216,0.5)').attr('stroke-width', 1);
-      callout(g, chartRect.x + chartRect.w, chartRect.y + chartRect.h + 52, 'pale band = each minute’s full traded range (REAL)', { anchor: 'end', size: 10.5 });
+      callout(g, chartRect.x + chartRect.w, chartRect.y + chartRect.h + 52, 'pale band = each minute’s full range of prints (REAL)', { anchor: 'end', size: 10.5 });
     },
   },
 
@@ -553,9 +585,6 @@ const BEATS = {
     chart: '02:47', model: true,
     anno: g => {
       if (!xScale) return;
-      const x = xScale(utcMin('02:10'));
-      callout(g, x, yScale(0.40), ['dashed: the clock reading, made precise.', 'Model fair value from score, cards, time only'],
-        { anchor: 'middle', size: 11, fill: '#7bc8e8' });
       const c = columnGeom();
       callout(g, c.x0 - 10, c.yFor(0.17) - 24, 'market 17¢', { anchor: 'end', mono: true, size: 13, fill: '#e8e4d8' });
       callout(g, c.x0 - 10, c.yFor(0.17) - 8, 'model ≈12¢', { anchor: 'end', mono: true, size: 12, fill: '#7bc8e8' });

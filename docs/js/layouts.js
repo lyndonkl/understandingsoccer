@@ -159,9 +159,11 @@ export function scorelineGrid(N, rect, { cells, kMax = 4, alloc }) {
       const gx = k % side, gy = Math.floor(k / side);
       s.x[idx] = cx + cellW * pad + (gx + 0.5) * step + (hash01(idx, 7) - 0.5) * step * 0.3;
       s.y[idx] = cy + cellH * pad + (gy + 0.5) * step + (hash01(idx, 8) - 0.5) * step * 0.3;
-      // YES worlds first within the cell (they read as the "lit" fraction)
+      // YES worlds first within the cell (they read as the "lit" fraction).
+      // NO worlds stay clearly visible: cell likelihood is dot count, and
+      // the count must be readable for dim cells too.
       if (k < yesN) paint(s, idx, PALETTE.cold, 0.95);
-      else paint(s, idx, PALETTE.dim, 0.32);
+      else paint(s, idx, PALETTE.dim, 0.5);
       s.size[idx] = Math.max(Math.min(step * 0.7, 4.2), 1.5);
     }
     cursor += count;

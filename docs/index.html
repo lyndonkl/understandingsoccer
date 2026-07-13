@@ -66,8 +66,8 @@
     <article class="card" data-beat="dice">
       <span class="eyebrow">The model’s two ingredients</span>
       <h2>Two dice, loaded differently</h2>
-      <p>Before any grid, meet its ingredients. The model treats each team’s goals as a Poisson process: a counting recipe that turns one number, the expected-goal rate λ, into a full spread of outcomes.</p>
-      <p>Argentina at λ&nbsp;≈&nbsp;<span class="num">1.8</span> <span class="chip model">model</span>: 16% no goals, 29% one, 27% two, 16% three, 11% more. Switzerland at λ&nbsp;≈&nbsp;<span class="num">0.9</span> <span class="chip model">model</span>: 42% blank, 36% one goal, 16% two, 6% more.</p>
+      <p>Before any grid, meet its ingredients. The model treats each team’s goals as random arrivals at a steady average rate: λ, in goals per 90 minutes. Fix the rate and the arithmetic of random arrivals fixes the chance of every count, the way a shop averaging 1.8 customers an hour still has a knowable chance of an empty hour. That recipe is the Poisson distribution.</p>
+      <p>So Argentina at λ&nbsp;≈&nbsp;<span class="num">1.8</span> per match <span class="chip model">model</span> works out to: 16% no goals, 29% one, 27% two, 16% three, 11% more. Switzerland at λ&nbsp;≈&nbsp;<span class="num">0.9</span> <span class="chip model">model</span>: 42% blank, 36% one goal, 16% two, 6% more.</p>
       <p>Those are the two bars beside this card, drawn in dots. Argentina’s mass sits on one and two goals; Switzerland’s crowds zero and one. Multiply the two dice and every final score follows.</p>
     </article>
 
@@ -85,7 +85,7 @@
       <span class="eyebrow">The match begins to happen</span>
       <h2>Minute 10: the favorite scores</h2>
       <p>Alexis Mac Allister heads in a Messi corner. The contract collapses from <span class="price">25¢</span> to <span class="price">12¢</span> within minutes <span class="chip real">real</span>.</p>
-      <p>Switzerland’s ability did not change; the ledger did. Over the remaining eighty minutes the model expects roughly <span class="num">1.6</span> more Argentina goals and <span class="num">0.8</span> Swiss ones <span class="chip model">model</span>. An equalizer at some point is barely better than a coin flip (<span class="num">54%</span>), and scoring it only buys back the problem Switzerland started with. From a goal up, the model makes Argentina an <span class="num">83%</span> favorite to win in regulation <span class="chip model">model</span>.</p>
+      <p>Switzerland’s ability did not change; the ledger did. The rates simply shrink to the time left: 1.8&nbsp;×&nbsp;80⁄90 ≈ <span class="num">1.6</span> more Argentina goals expected, 0.9&nbsp;×&nbsp;80⁄90 ≈ <span class="num">0.8</span> Swiss ones <span class="chip model">model</span>. At that Swiss rate, the chance of scoring at least once in the remaining eighty minutes is <span class="num">54%</span> <span class="chip model">model</span>; and even level again, Switzerland would face the same stronger opponent with less clock. Re-run the whole grid from 1–0 with eighty minutes left and Argentina wins in regulation <span class="num">83%</span> of the time <span class="chip model">model</span>.</p>
       <p>The cold read of this state: about <span class="price cold">10¢</span> <span class="chip model">model</span>. The market paid <span class="price">12¢</span> <span class="chip real">real</span>.</p>
     </article>
 
@@ -93,7 +93,7 @@
     <article class="card" data-beat="equalizer">
       <span class="eyebrow">The most crowded minute</span>
       <h2>Minute 67: 1–1, and the market floods</h2>
-      <p>Dan Ndoye slips the equalizer under Martínez. Within one minute, this contract trades at <span class="price">10¢</span> and at <span class="price">35¢</span> <span class="chip real">real</span>. Not in sequence. In the same sixty seconds.</p>
+      <p>Dan Ndoye slips the equalizer under Martínez. Remember the tape: a minute holds many individual prints. In this one minute, prints in the Switzerland-to-advance contract (the YES side we have followed all night) land anywhere from <span class="price">10¢</span> to <span class="price">35¢</span> <span class="chip real">real</span>: different pairs of traders, same goal, twenty-five cents of disagreement.</p>
       <p>The next minute, <span class="num">1.28&nbsp;million</span> contracts change hands, roughly <span class="num">22×</span> the pre-kickoff rate <span class="chip real">real</span>. Heavy volume alone proves interest. Heavy volume across a 25-cent range proves disagreement: a flood of orders repricing the same goal faster than the crowd can agree on what it is worth (the public tape shows over a thousand prints in three minutes <span class="chip real">real</span>).</p>
       <p>The pale band around the price line is each minute’s full traded range. Watch it blow open here, and stay open.</p>
     </article>
@@ -113,7 +113,7 @@
       <h2>The story and the clock</h2>
       <p>The story reading: Switzerland is down a man for fifty-plus minutes, hope just cancelled, sell.</p>
       <p>The clock reading: Argentina now has <em>fewer minutes</em> in which to convert its advantage, and every scoreless minute makes the draw, and the penalty shootout behind it, more likely.</p>
-      <p>The dashed line is the clock reading made precise: this page’s model, fed only score, cards, and time remaining, values survival at <span class="price cold">≈12¢</span> right after the red card and drifts toward <span class="price cold">17¢</span> at the whistle <span class="chip model">model</span>.</p>
+      <p>The dashed line is the clock reading made precise. It is the same two dice from kickoff, re-rolled every minute: less time on the clock, and after the red card Switzerland’s scoring rate roughly halved while Argentina’s more than doubles. Rolled from this state, the dice value survival at <span class="price cold">≈12¢</span>, drifting toward <span class="price cold">17¢</span> at the whistle <span class="chip model">model</span>. The solid white line is the market: the traded Kalshi price.</p>
       <p class="aside">Who holds each reading? Kalshi does not disclose who trades. Treat the two readings as an interpretation of the price’s behavior, and never as a census of traders.</p>
     </article>
 
@@ -122,7 +122,7 @@
       <span class="eyebrow">Time decay, live</span>
       <h2>Minutes 73–90: the survival climb</h2>
       <p>Switzerland stops trying to win. Ten men, one objective: hold 1–1 to the whistle. The price climbs a cent at a time, <span class="num">16 → 19 → 22 → 25</span> <span class="chip real">real</span>.</p>
-      <p>Now read the two lines together. The clock alone lifts the model from <span class="price cold">≈12¢</span> to <span class="price cold">17¢</span> <span class="chip model">model</span>. The market climbed from <span class="price">16¢</span> to <span class="price">26¢</span> <span class="chip real">real</span>. The amber wedge between the lines is the part the clock cannot explain. It gets a name at the final whistle.</p>
+      <p>Now read the two lines together. Re-rolling the dice each minute, time alone lifts fair value from <span class="price cold">≈12¢</span> to <span class="price cold">17¢</span> <span class="chip model">model</span>. The traded price climbed from <span class="price">16¢</span> to <span class="price">26¢</span> <span class="chip real">real</span>. The amber wedge between the lines is the part the clock cannot explain. It gets a name at the final whistle.</p>
       <p class="aside">Same digits, third meaning, one screen over: at minute ~85 Argentina’s <em>regulation-time win</em> contract also read <span class="price">26¢</span> <span class="chip real">real</span>. A favorite racing the same clock from the other side.</p>
     </article>
 
